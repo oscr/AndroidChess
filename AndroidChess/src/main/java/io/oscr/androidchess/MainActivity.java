@@ -58,14 +58,15 @@ public class MainActivity extends Activity implements PropertyChangeListener {
 
                     // Have to scale the images or it looks really fubar
                     id = getResources().getIdentifier(pieceStr, "drawable", getPackageName());
-                    BitmapDrawable bd = (BitmapDrawable)getResources().getDrawable(id);
-                    Bitmap b = Bitmap.createScaledBitmap(bd.getBitmap(),
-                            (int) (bd.getIntrinsicHeight() * 0.7),
-                            (int) (bd.getIntrinsicWidth() * 0.7),
-                            false);
+                    board[j][i].setBackground(getResources().getDrawable(id));
+                    //BitmapDrawable bd = (BitmapDrawable)getResources().getDrawable(id);
+                    //Bitmap b = Bitmap.createScaledBitmap(bd.getBitmap(),
+                    //        (int) (bd.getIntrinsicHeight() * 0.7),
+                    //        (int) (bd.getIntrinsicWidth() * 0.7),
+                     //       false);
 
-                    Drawable sd = new BitmapDrawable(getResources(), b);
-                    board[j][i].setCompoundDrawablesWithIntrinsicBounds(null, sd, null, controller.getBoardColor(j, i));
+                    //Drawable sd = new BitmapDrawable(getResources(), b);
+                   // board[j][i].setCompoundDrawablesWithIntrinsicBounds(null, sd, null, controller.getBoardColor(j, i));
                 }
 
                 // TODO
@@ -75,25 +76,26 @@ public class MainActivity extends Activity implements PropertyChangeListener {
     }
 
     private void redrawBoard(){
-
-
         for(int i = 7; 0 <= i; i-- ){
             for(int j = 0; j <= 7; j++){
+                board[j][i].setBackground(null);
                 board[j][i].setBackgroundColor(controller.getBoardColor(j, i).getColor());
                 String pieceStr = controller.getPieceString(j, i);
                 if(pieceStr != null){
                     // Have to scale the images or it looks really fubar
                     int id = getResources().getIdentifier(pieceStr, "drawable", getPackageName());
-                    BitmapDrawable bd = (BitmapDrawable)getResources().getDrawable(id);
-                    Bitmap b = Bitmap.createScaledBitmap(bd.getBitmap(),
-                            (int) (bd.getIntrinsicHeight() * 0.7),
-                            (int) (bd.getIntrinsicWidth() * 0.7),
-                            false);
+                    //BitmapDrawable bd = (BitmapDrawable)getResources().getDrawable(id);
+                   // Bitmap b = Bitmap.createScaledBitmap(bd.getBitmap(),
+                   //         (int) (bd.getIntrinsicHeight() * 0.7),
+                    //        (int) (bd.getIntrinsicWidth() * 0.7),
+                    //        false);
 
-                    Drawable sd = new BitmapDrawable(getResources(), b);
-                    board[j][i].setCompoundDrawablesWithIntrinsicBounds(null, sd, null, controller.getBoardColor(j, i));
+                   // Drawable sd = new BitmapDrawable(getResources(), b);
+
+                    board[j][i].setBackground(getResources().getDrawable(id));
+                    //board[j][i].setCompoundDrawablesWithIntrinsicBounds(null, sd, null, controller.getBoardColor(j, i));
                 } else {
-                    board[j][i].setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+
                 }
             }
         }
@@ -109,6 +111,7 @@ public class MainActivity extends Activity implements PropertyChangeListener {
     @Override
     public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
         redrawBoard();
+        findViewById(android.R.id.content).invalidate();
     }
 
     private class ButtonSelectionListener implements View.OnClickListener {
