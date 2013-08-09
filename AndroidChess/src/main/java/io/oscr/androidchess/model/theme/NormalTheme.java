@@ -4,24 +4,25 @@ import io.oscr.androidchess.model.pieces.IChessPiece;
 import io.oscr.androidchess.model.pieces.PieceColor;
 
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 
 public class NormalTheme implements IChessTheme {
-	private final int selectedColor = Color.YELLOW;
-	private final int oddColor = Color.WHITE;
-	private final int evenColor = Color.GRAY;
+	private final ColorDrawable selectedColor = new ColorDrawable(Color.YELLOW);
+	private final ColorDrawable oddColor = new ColorDrawable(Color.WHITE);
+	private final ColorDrawable evenColor = new ColorDrawable(Color.GRAY);
 
 	@Override
-	public int getSelectedSquare() {
+	public ColorDrawable getSelectedSquare() {
 		return selectedColor;
 	}
 
 	@Override
-	public int getOddSquare() {
+	public ColorDrawable getOddSquare() {
 		return oddColor;
 	}
 
 	@Override
-	public int getEvenSquare() {
+	public ColorDrawable getEvenSquare() {
 		return evenColor;
 	}
 

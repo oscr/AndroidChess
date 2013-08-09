@@ -18,6 +18,9 @@ public enum MovementRules {
 	;
 
 	public static Set<BoardPosition> getLegalMoves(BoardPosition from, ChessBoard board) {
+        if(from == null ||board == null)
+            throw new NullPointerException("Argument was null");
+
 		//checkNotNull(from, "Arguement from was null. Expected not null");
 		//checkNotNull(board, "Argument board was null. Expected not null");
 

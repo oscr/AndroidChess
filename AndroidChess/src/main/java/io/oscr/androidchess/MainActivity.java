@@ -1,5 +1,6 @@
 package io.oscr.androidchess;
 
+import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -11,6 +12,7 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -28,6 +30,7 @@ import static io.oscr.androidchess.utils.Constants.FILES;
 public class MainActivity extends Activity implements PropertyChangeListener {
 
     private Button[][] board;
+    private ChessController controller;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,11 +39,8 @@ public class MainActivity extends Activity implements PropertyChangeListener {
 
         // Set up game and listeners
         IChessModel model = new ChessModel();
-        ChessController controller = new ChessController(model);
+        controller = new ChessController(model);
         model.addObserver(this);
-
-
-
 
         board = new Button[Constants.BOARD_SIZE][Constants.BOARD_SIZE];
         for(int i = 7; 0 <= i; i-- ){
@@ -51,30 +51,53 @@ public class MainActivity extends Activity implements PropertyChangeListener {
                 int id = getResources().getIdentifier(name, "id", getPackageName());
 
                 board[j][i] = (Button)findViewById(id);
-                board[j][i].setBackgroundColor(controller.getBoardColor(j, i));
+                board[j][i].setBackgroundColor(controller.getBoardColor(j, i).getColor());
 
                 String pieceStr = controller.getPieceString(j, i);
                 if(pieceStr != null){
-                    id = getResources().getIdentifier(pieceStr, "drawable", getPackageName());
-                    Drawable d = getResources().getDrawable(id);
 
                     // Have to scale the images or it looks really fubar
-                    BitmapDrawable bd = (BitmapDrawable)d;
+                    id = getResources().getIdentifier(pieceStr, "drawable", getPackageName());
+                    BitmapDrawable bd = (BitmapDrawable)getResources().getDrawable(id);
                     Bitmap b = Bitmap.createScaledBitmap(bd.getBitmap(),
                             (int) (bd.getIntrinsicHeight() * 0.7),
                             (int) (bd.getIntrinsicWidth() * 0.7),
                             false);
 
                     Drawable sd = new BitmapDrawable(getResources(), b);
-                    board[j][i].setCompoundDrawablesWithIntrinsicBounds(null, sd, null, new ColorDrawable(controller.getBoardColor(j, i)));
+                    board[j][i].setCompoundDrawablesWithIntrinsicBounds(null, sd, null, controller.getBoardColor(j, i));
                 }
 
                 // TODO
-                //board[j][i].setOnClickListener();
+                board[j][i].setOnClickListener(new ButtonSelectionListener(j, i));
             }
         }
     }
 
+    private void redrawBoard(){
+
+
+        for(int i = 7; 0 <= i; i-- ){
+            for(int j = 0; j <= 7; j++){
+                board[j][i].setBackgroundColor(controller.getBoardColor(j, i).getColor());
+                String pieceStr = controller.getPieceString(j, i);
+                if(pieceStr != null){
+                    // Have to scale the images or it looks really fubar
+                    int id = getResources().getIdentifier(pieceStr, "drawable", getPackageName());
+                    BitmapDrawable bd = (BitmapDrawable)getResources().getDrawable(id);
+                    Bitmap b = Bitmap.createScaledBitmap(bd.getBitmap(),
+                            (int) (bd.getIntrinsicHeight() * 0.7),
+                            (int) (bd.getIntrinsicWidth() * 0.7),
+                            false);
+
+                    Drawable sd = new BitmapDrawable(getResources(), b);
+                    board[j][i].setCompoundDrawablesWithIntrinsicBounds(null, sd, null, controller.getBoardColor(j, i));
+                } else {
+                    board[j][i].setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+                }
+            }
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -85,6 +108,19 @@ public class MainActivity extends Activity implements PropertyChangeListener {
 
     @Override
     public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+        redrawBoard();
+    }
 
+    private class ButtonSelectionListener implements View.OnClickListener {
+        private final BoardPosition position;
+
+        private ButtonSelectionListener(int file, int rank){
+            position = new BoardPosition(file, rank);
+        }
+
+        @Override
+        public void onClick(View view) {
+            controller.selectPosition(position);
+        }
     }
 }

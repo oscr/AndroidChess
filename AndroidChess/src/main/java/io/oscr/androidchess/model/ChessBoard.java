@@ -66,6 +66,15 @@ public class ChessBoard implements IChessBoard {
 	
 	@Override
 	public boolean isEmpty(int file, int rank){
+
+        // Because Google Guava crashes the emulator
+        if(file < Constants.BOARD_MIN_POSITION || rank < Constants.BOARD_MIN_POSITION)
+            throw new IllegalArgumentException();
+
+        // Because Google Guava crashes the emulator
+        if(file > Constants.BOARD_MAX_POSITION || rank > Constants.BOARD_MAX_POSITION)
+            throw new IllegalArgumentException();
+
 		//checkArgument(file >= Constants.BOARD_MIN_POSITION, "Argument file is smaller that specified: %s", file);
 		//checkArgument(file <= Constants.BOARD_MAX_POSITION, "Argument file is larger that specified: %s", file);
 		//checkArgument(rank >= Constants.BOARD_MIN_POSITION, "Argument rank is smaller that specified: %s", rank);
@@ -98,6 +107,10 @@ public class ChessBoard implements IChessBoard {
 	
  	@Override
 	public void move(BoardPosition from, BoardPosition to){
+
+        if(from == null || to == null)
+            throw new NullPointerException();
+
  		//checkNotNull(from, "Argument from was null. Expected non null");
  		//checkNotNull(to, "Argument to was null. Expected non null");
  		
@@ -147,7 +160,15 @@ public class ChessBoard implements IChessBoard {
 		//checkArgument(file <= Constants.BOARD_MAX_POSITION, "Argument file is larger that specified: %s", file);
 		//checkArgument(rank >= Constants.BOARD_MIN_POSITION, "Argument rank is smaller that specified: %s", file);
 		//checkArgument(rank <= Constants.BOARD_MAX_POSITION, "Argument rank is larger that specified: %s", file);
-		
+
+        // Because Google Guava crashes the emulator
+        if(file < Constants.BOARD_MIN_POSITION || rank < Constants.BOARD_MIN_POSITION)
+            throw new IllegalArgumentException();
+
+        // Because Google Guava crashes the emulator
+        if(file > Constants.BOARD_MAX_POSITION || rank > Constants.BOARD_MAX_POSITION)
+            throw new IllegalArgumentException();
+
 		return board[file][rank];
 	}
 

@@ -1,5 +1,7 @@
 package io.oscr.androidchess.model;
 
+import android.graphics.drawable.ColorDrawable;
+
 import io.oscr.androidchess.model.pieces.PieceColor;
 import io.oscr.androidchess.model.pieces.PieceType;
 
@@ -13,7 +15,7 @@ public interface IChessModel {
 
 	public abstract void removeObserver(PropertyChangeListener observer);
 
-	public abstract int getBoardColor(BoardPosition boardPosition);
+	public abstract ColorDrawable getBoardColor(BoardPosition boardPosition);
 
 	public abstract String getPieceString(BoardPosition boardPosition);
 

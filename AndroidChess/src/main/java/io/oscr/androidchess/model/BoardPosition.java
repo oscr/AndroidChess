@@ -1,12 +1,12 @@
 package io.oscr.androidchess.model;
 
-//import static com.google.common.base.Preconditions.checkNotNull;
-//import static com.google.common.base.Preconditions.checkArgument;
-//import static com.google.common.base.Preconditions.checkPositionIndex;
-
 import io.oscr.androidchess.utils.Constants;
 
 import java.io.Serializable;
+
+//import static com.google.common.base.Preconditions.checkArgument;
+//import static com.google.common.base.Preconditions.checkNotNull;
+//import static com.google.common.base.Preconditions.checkPositionIndex;
 
 /**
  * TODO 
@@ -33,6 +33,12 @@ public final class BoardPosition implements Serializable {
 	 * @param position to represent.
 	 */
 	public BoardPosition(String position) {
+        if(position == null)
+            throw new NullPointerException("Argument position was null. Expected non null");
+
+        if(position.length() != 2)
+            throw new IllegalArgumentException("Argument position was incorrect length");
+
 		//checkNotNull(position, "Argument position was null. Expected non null");
 		//checkArgument(position.length() == 2, "Argument position was incorrect length");
 		
@@ -42,6 +48,9 @@ public final class BoardPosition implements Serializable {
 		// -1 because chess board coordinates aren't zero indexed
 		rank = Integer.parseInt(position.substring(1)) - 1;
 
+        if(file > Constants.BOARD_MAX_POSITION
+                || rank > Constants.BOARD_MAX_POSITION)
+            throw new IllegalArgumentException();
 		//checkPositionIndex(file, Constants.BOARD_MAX_POSITION);
 		//checkPositionIndex(rank, Constants.BOARD_MAX_POSITION);
 
@@ -60,7 +69,16 @@ public final class BoardPosition implements Serializable {
 		
 		//checkArgument(file <= Constants.BOARD_MAX_POSITION, "Argument file is larger that specified: %s", file);
 		//checkArgument(rank <= Constants.BOARD_MAX_POSITION, "Argument rank is larger that specified: %s", rank);
-		this.file = file;
+
+        // Because Google Guava crashes the emulator
+        if(file < Constants.BOARD_MIN_POSITION || rank < Constants.BOARD_MIN_POSITION)
+            throw new IllegalArgumentException();
+
+        // Because Google Guava crashes the emulator
+        if(file > Constants.BOARD_MAX_POSITION || rank > Constants.BOARD_MAX_POSITION)
+            throw new IllegalArgumentException();
+
+        this.file = file;
 		this.rank = rank;
 
 	}

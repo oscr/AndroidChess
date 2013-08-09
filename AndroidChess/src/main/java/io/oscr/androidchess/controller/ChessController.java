@@ -1,5 +1,7 @@
 package io.oscr.androidchess.controller;
 
+import android.graphics.drawable.ColorDrawable;
+
 import io.oscr.androidchess.model.BoardPosition;
 import io.oscr.androidchess.model.IChessModel;
 import io.oscr.androidchess.model.event.PromotionEvent;
@@ -13,7 +15,7 @@ public class ChessController {
 		this.model = model;
 	}
 	
-	public int getBoardColor(int file, int rank) {
+	public ColorDrawable getBoardColor(int file, int rank) {
 		return model.getBoardColor(new BoardPosition(file, rank));
 	}
 
@@ -24,6 +26,10 @@ public class ChessController {
 	public void selectPosition(int file, int rank) {
 		model.selectPosition(new BoardPosition(file, rank));
 	}
+
+    public void selectPosition(BoardPosition position) {
+        model.selectPosition(position);
+    }
 
 	public void newGame(PieceColor white) {
 		model.newGame(white);

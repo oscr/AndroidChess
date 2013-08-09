@@ -1,5 +1,7 @@
 package io.oscr.androidchess.model;
 
+import android.graphics.drawable.ColorDrawable;
+
 import io.oscr.androidchess.model.event.PromotionEvent;
 import io.oscr.androidchess.model.pieces.ChessPiece;
 import io.oscr.androidchess.model.pieces.IChessPiece;
@@ -209,7 +211,7 @@ public class ChessModel implements IObservable, IChessModel {
 	}
 
 	@Override
-	public int getBoardColor(BoardPosition boardPosition) {
+	public ColorDrawable getBoardColor(BoardPosition boardPosition) {
 		int file = boardPosition.getFile();
 		int rank = boardPosition.getRank();
 
