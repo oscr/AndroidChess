@@ -7,7 +7,7 @@
     <!-- From: file:/C:/Users/Admin/AndroidStudioProjects/AndroidChessProject/AndroidChess/src/main/res/values/strings.xml -->
     <string name="action_settings">Settings</string>
     <string name="app_name">AndroidChess</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="info">Info</string>
     <!-- From: file:/C:/Users/Admin/AndroidStudioProjects/AndroidChessProject/AndroidChess/src/main/res/values/styles.xml -->
     <style name="AppBaseTheme" parent="android:Theme.Light">
         <!--
