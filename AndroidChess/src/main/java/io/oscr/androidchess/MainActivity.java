@@ -2,8 +2,12 @@ package io.oscr.androidchess;
 
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ScaleDrawable;
 import android.os.Bundle;
 import android.app.Activity;
+import android.util.Log;
 import android.view.Menu;
 import android.widget.Button;
 import android.widget.TextView;
@@ -49,8 +53,13 @@ public class MainActivity extends Activity implements PropertyChangeListener {
 
                 String pieceStr = controller.getPieceString(j, i);
                 if(pieceStr != null){
-                    //[j][i].setBackground();
+                    id = getResources().getIdentifier("bp", "drawable", getPackageName());
+                    Log.d("Id", "" + id);
 
+                    Drawable d = getResources().getDrawable(id);
+                    Log.d("NULL D:", ""+(d == null));
+
+                    board[j][i].setCompoundDrawablesWithIntrinsicBounds(null, d, null, new ColorDrawable(controller.getBoardColor(j, i)));
                 }
 
                 // TODO
