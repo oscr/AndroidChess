@@ -47,6 +47,12 @@ public class MainActivity extends Activity implements PropertyChangeListener {
                 board[j][i] = (Button)findViewById(id);
                 board[j][i].setBackgroundColor(controller.getBoardColor(j, i));
 
+                String pieceStr = controller.getPieceString(j, i);
+                if(pieceStr != null){
+                    //[j][i].setBackground();
+
+                }
+
                 // TODO
                 //board[j][i].setOnClickListener();
             }

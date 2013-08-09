@@ -1,13 +1,9 @@
 package io.oscr.androidchess.model.theme;
 
-import android.graphics.Color;
-
 import io.oscr.androidchess.model.pieces.IChessPiece;
 import io.oscr.androidchess.model.pieces.PieceColor;
-import io.oscr.androidchess.utils.Constants;
 
-import java.io.File;
-import java.io.IOException;
+import android.graphics.Color;
 
 public class FunnyTheme implements IChessTheme {
     private final int selectedColor = Color.CYAN;

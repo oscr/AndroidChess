@@ -8,7 +8,7 @@ import io.oscr.androidchess.utils.Constants;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+//import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * TODO Check that all methods are side effect free 
@@ -18,8 +18,8 @@ public enum MovementRules {
 	;
 
 	public static Set<BoardPosition> getLegalMoves(BoardPosition from, ChessBoard board) {
-		checkNotNull(from, "Arguement from was null. Expected not null");
-		checkNotNull(board, "Argument board was null. Expected not null");
+		//checkNotNull(from, "Arguement from was null. Expected not null");
+		//checkNotNull(board, "Argument board was null. Expected not null");
 
 		IChessPiece piece = board.getChessPiece(from);
 		switch (piece.getPieceType()) {
