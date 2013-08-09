@@ -1,7 +1,9 @@
 package io.oscr.androidchess;
 
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ScaleDrawable;
@@ -53,13 +55,18 @@ public class MainActivity extends Activity implements PropertyChangeListener {
 
                 String pieceStr = controller.getPieceString(j, i);
                 if(pieceStr != null){
-                    id = getResources().getIdentifier("bp", "drawable", getPackageName());
-                    Log.d("Id", "" + id);
-
+                    id = getResources().getIdentifier(pieceStr, "drawable", getPackageName());
                     Drawable d = getResources().getDrawable(id);
-                    Log.d("NULL D:", ""+(d == null));
 
-                    board[j][i].setCompoundDrawablesWithIntrinsicBounds(null, d, null, new ColorDrawable(controller.getBoardColor(j, i)));
+                    // Have to scale the images or it looks really fubar
+                    BitmapDrawable bd = (BitmapDrawable)d;
+                    Bitmap b = Bitmap.createScaledBitmap(bd.getBitmap(),
+                            (int) (bd.getIntrinsicHeight() * 0.7),
+                            (int) (bd.getIntrinsicWidth() * 0.7),
+                            false);
+
+                    Drawable sd = new BitmapDrawable(getResources(), b);
+                    board[j][i].setCompoundDrawablesWithIntrinsicBounds(null, sd, null, new ColorDrawable(controller.getBoardColor(j, i)));
                 }
 
                 // TODO
