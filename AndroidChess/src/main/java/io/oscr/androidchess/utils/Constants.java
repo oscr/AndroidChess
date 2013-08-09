@@ -8,12 +8,16 @@ import java.io.File;
 
 public enum Constants {
 	;
+
+    public static final String[] FILES = {"A", "B", "C", "D", "E","F","G","H"};
 	
 	// TODO Note that these are zero index. This is actually a little strange now 
 	// when BoardPositions can be created with standard notation (E1, B4... etc)
 	public static final int BOARD_MIN_POSITION = 0;
 	public static final int BOARD_MAX_POSITION = 7;
-	
+
+    public static final int BOARD_SIZE = 8;
+
 	public static final int WHITE_HOME_ROW = 1;
 	public static final int BLACK_HOME_ROW = 6;
 	
@@ -60,8 +64,6 @@ public enum Constants {
     public static final BoardPosition W_KINGSIDE_ROOK_START = new BoardPosition("H1");
     public static final BoardPosition W_QUEENSIDE_ROOK_START = new BoardPosition("A1");
     
-	public static final String BASE_PATH = "resources" + File.separator + "images" + File.separator;
-
 	public static int getHomeRow(IChessPiece piece) {
 		return piece.getPieceColor() == PieceColor.WHITE 
 				? Constants.WHITE_HOME_ROW
