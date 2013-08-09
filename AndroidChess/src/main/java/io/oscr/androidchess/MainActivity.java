@@ -73,6 +73,15 @@ public class MainActivity extends Activity implements PropertyChangeListener {
 
                     //Drawable sd = new BitmapDrawable(getResources(), b);
                    // board[j][i].setCompoundDrawablesWithIntrinsicBounds(null, sd, null, controller.getBoardColor(j, i));
+                } else {
+                    // DO NOT REMOVE THE FOLLOWING LOGIC!!!!!!!
+                    // If this is not performed the 4 middle rows will act strange when pieces are
+                    // placed upon them. MANY, MANY, MANY hours of debugging found this solution.
+                    //
+                    // When done trying to solve this please increment the following counter:
+                    // Hours wasted here: 34
+                    LayerDrawable ld = new LayerDrawable(new Drawable[]{controller.getBoardColor(j, i)});
+                    board[j][i].setBackground(ld);
                 }
 
                 board[j][i].setOnClickListener(new ButtonSelectionListener(j, i));
@@ -84,6 +93,8 @@ public class MainActivity extends Activity implements PropertyChangeListener {
         for(int i = 7; 0 <= i; i-- ){
             for(int j = 0; j <= 7; j++){
                 board[j][i].setBackground(null);
+                board[j][i].setBackgroundColor(controller.getBoardColor(j, i).getColor());
+
                 String pieceStr = controller.getPieceString(j, i);
                 if(pieceStr != null){
                     // Have to scale the images or it looks really fubar
@@ -91,8 +102,6 @@ public class MainActivity extends Activity implements PropertyChangeListener {
                     Drawable d = getResources().getDrawable(id);
                     LayerDrawable ld = new LayerDrawable(new Drawable[]{controller.getBoardColor(j, i), d});
                     board[j][i].setBackground(ld);
-                } else {
-                    board[j][i].setBackgroundColor(controller.getBoardColor(j, i).getColor());
 
                 }
             }
