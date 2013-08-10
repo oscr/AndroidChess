@@ -78,6 +78,10 @@ public class MainActivity extends Activity implements PropertyChangeListener {
                 board[j][i].setOnClickListener(new ButtonSelectionListener(j, i));
             }
         }
+
+        TextView tv = (TextView)findViewById(R.id.information);
+        tv.setText(controller.getDisplayInformation());
+
     }
 
     private void redrawBoard(){
