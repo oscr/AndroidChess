@@ -183,6 +183,9 @@ public class MainActivity extends Activity implements PropertyChangeListener {
                 redrawBoard();
             }
 
+            TextView tv = (TextView)findViewById(R.id.information);
+            tv.setText(controller.getDisplayInformation());
+
         } else {
             // TODO Unknown event!
         }
