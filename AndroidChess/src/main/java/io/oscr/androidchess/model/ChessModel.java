@@ -389,6 +389,7 @@ public class ChessModel implements IObservable, IChessModel {
 		PieceColor color = board.getTurn();
 		move(from, to);
 		board.setPromotion(new ChessPiece(color, type), to);
-
+        fromPosition = null;
+        observers.firePropertyChange(null, false, new RedrawEvent(new BoardPosition[]{from, to}));
 	}
 }

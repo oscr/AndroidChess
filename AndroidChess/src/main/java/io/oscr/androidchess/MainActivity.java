@@ -1,5 +1,6 @@
 package io.oscr.androidchess;
 
+import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -31,6 +32,7 @@ import io.oscr.androidchess.model.event.PromotionEvent;
 import io.oscr.androidchess.model.event.RedrawAllEvent;
 import io.oscr.androidchess.model.event.RedrawEvent;
 import io.oscr.androidchess.model.pieces.PieceColor;
+import io.oscr.androidchess.model.pieces.PieceType;
 import io.oscr.androidchess.utils.Constants;
 
 import static io.oscr.androidchess.utils.Constants.FILES;
@@ -147,7 +149,32 @@ public class MainActivity extends Activity implements PropertyChangeListener {
         Object event = propertyChangeEvent.getNewValue();
         if(event instanceof ChessEvent){
             if(event.getClass() == PromotionEvent.class){
-                // TODO Show popup for more information
+
+                final PromotionEvent pe = (PromotionEvent)event;
+                CharSequence[] types = {PieceType.QUEEN.toString(), PieceType.ROOK.toString(), PieceType.BISHOP.toString(), PieceType.KNIGHT.toString()};
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Promote pawn to");
+                builder.setItems(types, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch(which){
+                            case 0:
+                                controller.setPromotion(PieceType.QUEEN, pe);
+                                break;
+                            case 1:
+                                controller.setPromotion(PieceType.ROOK, pe);
+                                break;
+                            case 2:
+                                controller.setPromotion(PieceType.BISHOP, pe);
+                                break;
+                            case 3:
+                                controller.setPromotion(PieceType.KNIGHT, pe);
+                                break;
+                        }
+                    }
+                });
+                builder.show();
 
             } else if(event.getClass() == RedrawEvent.class){
                 RedrawEvent re = (RedrawEvent)event;
