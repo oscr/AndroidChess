@@ -3,6 +3,8 @@ package io.oscr.androidchess.model;
 import android.graphics.drawable.ColorDrawable;
 
 import io.oscr.androidchess.model.event.PromotionEvent;
+import io.oscr.androidchess.model.event.RedrawAllEvent;
+import io.oscr.androidchess.model.event.RedrawEvent;
 import io.oscr.androidchess.model.pieces.ChessPiece;
 import io.oscr.androidchess.model.pieces.IChessPiece;
 import io.oscr.androidchess.model.pieces.PieceColor;
@@ -48,11 +50,13 @@ public class ChessModel implements IObservable, IChessModel {
 				IChessPiece piece = board.getChessPiece(position);
 				if (piece != null && piece.getPieceColor() == playing) {
 					fromPosition = position;
+                    observers.firePropertyChange(null, false, new RedrawEvent(new BoardPosition[]{fromPosition}));
 				}
 
 			} else {
 				if (position.equals(fromPosition)) {
 					fromPosition = null;
+                    observers.firePropertyChange(null, false, new RedrawEvent(new BoardPosition[]{position}));
 
 				} else {
 
@@ -60,7 +64,6 @@ public class ChessModel implements IObservable, IChessModel {
 					if (legalMoves.contains(position) && isValidPosition(fromPosition, position)) {
 
 						if (isPawnPromotion(fromPosition, position)) {
-							// TODO Fix the PROMOTION hack
 							observers.firePropertyChange(null, false, new PromotionEvent(fromPosition, position));
 
 						} else {
@@ -70,6 +73,10 @@ public class ChessModel implements IObservable, IChessModel {
 									move(fromPosition, position, move);
 									// Will mark the King as moved if it's moved
 									board.setKingMoved(position);
+
+                                    BoardPosition bp = fromPosition;
+                                    fromPosition = null;
+                                    observers.firePropertyChange(null, false, new RedrawEvent(new BoardPosition[]{bp, position, move.from, move.to}));
 								}
 
 							} else {
@@ -81,6 +88,13 @@ public class ChessModel implements IObservable, IChessModel {
 								// Will mark the King as moved if it's moved
 								board.setKingMoved(position);
 
+                                // This has to be done because if the fromPosition isn't null then it will be marked as selected
+                                // when redrawing the
+                                //
+                                BoardPosition bp = fromPosition;
+                                fromPosition = null;
+                                observers.firePropertyChange(null, false, new RedrawEvent(new BoardPosition[]{bp, position}));
+
 							}
 
 						}
@@ -89,8 +103,6 @@ public class ChessModel implements IObservable, IChessModel {
 				}
 			}
 		}
-
-		observers.firePropertyChange("", false, true);
 	}
 
 	/*
@@ -103,14 +115,17 @@ public class ChessModel implements IObservable, IChessModel {
 		if(fromPiece.getPieceType() == PieceType.PAWN){
 			final int HOME_ROW = Constants.getHomeRow(fromPiece);
 			final int MOVE_DELTA = Constants.getMoveDelta(fromPiece);
-			
+
+            // Checks if an passant is possible and sets an passant state in gameboard
 			if(fromPosition.getRank() == HOME_ROW && Math.abs((fromPosition.getRank() - to.getRank())) > 1 ){
 				board.setEnPassant(new BoardPosition(to.getFile(), to.getRank() - MOVE_DELTA), to);
 				// ATTENTION!
 				return;
 				
 			} else if(to.equals(board.getEnPassant())){
-				board.removeEnPassantPawn();
+				BoardPosition bp = board.getEnPassantPawn();
+                board.removeEnPassantPawn();
+                observers.firePropertyChange(null, false, new RedrawEvent(new BoardPosition[]{bp}));
 			}
 		
 		}
@@ -250,7 +265,7 @@ public class ChessModel implements IObservable, IChessModel {
 		fromPosition = null;
 		playing = PieceColor.WHITE;
 
-		observers.firePropertyChange("", false, true);
+		observers.firePropertyChange("", false, new RedrawAllEvent());
 
 	}
 
@@ -337,9 +352,7 @@ public class ChessModel implements IObservable, IChessModel {
 		// TODO En passant
 		board.move(from, to);
 		board.switchTurn();
-		fromPosition = null;
 		playing = PieceColor.switchTurn(playing);
-		observers.firePropertyChange("", false, true);
 
 	}
 
@@ -347,9 +360,7 @@ public class ChessModel implements IObservable, IChessModel {
 		// TODO En passant
 		board.move(from, to, move);
 		board.switchTurn();
-		fromPosition = null;
 		playing = PieceColor.switchTurn(playing);
-		observers.firePropertyChange("", false, true);
 
 	}
 
@@ -369,7 +380,7 @@ public class ChessModel implements IObservable, IChessModel {
 	@Override
 	public void changeColorTheme() {
 		chessTheme = chessTheme.getClass() == NormalTheme.class ? new FunnyTheme() : new NormalTheme();
-		observers.firePropertyChange("", false, true);
+		observers.firePropertyChange("", false, new RedrawAllEvent());
 
 	}
 

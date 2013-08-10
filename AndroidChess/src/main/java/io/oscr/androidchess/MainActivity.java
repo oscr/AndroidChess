@@ -25,6 +25,9 @@ import io.oscr.androidchess.controller.ChessController;
 import io.oscr.androidchess.model.BoardPosition;
 import io.oscr.androidchess.model.ChessModel;
 import io.oscr.androidchess.model.IChessModel;
+import io.oscr.androidchess.model.event.ChessEvent;
+import io.oscr.androidchess.model.event.PromotionEvent;
+import io.oscr.androidchess.model.event.RedrawEvent;
 import io.oscr.androidchess.utils.Constants;
 
 import static io.oscr.androidchess.utils.Constants.FILES;
@@ -80,13 +83,35 @@ public class MainActivity extends Activity implements PropertyChangeListener {
 
                 String pieceStr = controller.getPieceString(j, i);
                 if(pieceStr != null){
-                    // Have to scale the images or it looks really fubar
                     int id = getResources().getIdentifier(pieceStr, "drawable", getPackageName());
                     Drawable d = getResources().getDrawable(id);
                     LayerDrawable ld = new LayerDrawable(new Drawable[]{controller.getBoardColor(j, i), d});
                     board[j][i].setBackground(ld);
 
                 }
+            }
+        }
+    }
+
+    /**
+     * Instead of redrawing whole board just redraw the changed parts!
+     *
+     * @param positions
+     */
+    private void redrawBoardPositions(BoardPosition[] positions){
+        for(BoardPosition bp : positions){
+            int file = bp.getFile();
+            int rank = bp.getRank();
+
+            board[file][rank].setBackground(null);
+            board[file][rank].setBackgroundColor(controller.getBoardColor(file, rank).getColor());
+
+            String pieceStr = controller.getPieceString(file, rank);
+            if(pieceStr != null){
+                int id = getResources().getIdentifier(pieceStr, "drawable", getPackageName());
+                Drawable d = getResources().getDrawable(id);
+                LayerDrawable ld = new LayerDrawable(new Drawable[]{controller.getBoardColor(file, rank), d});
+                board[file][rank].setBackground(ld);
             }
         }
     }
@@ -100,8 +125,21 @@ public class MainActivity extends Activity implements PropertyChangeListener {
 
     @Override
     public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-        redrawBoard();
-        findViewById(android.R.id.content).invalidate();
+        Object event = propertyChangeEvent.getNewValue();
+        if(event instanceof ChessEvent){
+            if(event.getClass() == PromotionEvent.class){
+                // TODO Show popup for more information
+
+            } else if(event.getClass() == RedrawEvent.class){
+                RedrawEvent re = (RedrawEvent)event;
+                redrawBoardPositions(re.positions);
+            } else if(event.getClass() == RedrawEvent.class){
+
+            }
+
+        } else {
+            // TODO Unknown event!
+        }
     }
 
     private class ButtonSelectionListener implements View.OnClickListener {
