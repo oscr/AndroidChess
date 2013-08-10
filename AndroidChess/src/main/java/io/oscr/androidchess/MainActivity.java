@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -27,6 +28,7 @@ import io.oscr.androidchess.model.ChessModel;
 import io.oscr.androidchess.model.IChessModel;
 import io.oscr.androidchess.model.event.ChessEvent;
 import io.oscr.androidchess.model.event.PromotionEvent;
+import io.oscr.androidchess.model.event.RedrawAllEvent;
 import io.oscr.androidchess.model.event.RedrawEvent;
 import io.oscr.androidchess.utils.Constants;
 
@@ -124,6 +126,19 @@ public class MainActivity extends Activity implements PropertyChangeListener {
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch(item.getItemId())
+        {
+            case R.id.action_change_theme:
+                controller.changeColorTheme();
+                break;
+        }
+
+        return true;
+    }
+
+    @Override
     public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
         Object event = propertyChangeEvent.getNewValue();
         if(event instanceof ChessEvent){
@@ -133,8 +148,8 @@ public class MainActivity extends Activity implements PropertyChangeListener {
             } else if(event.getClass() == RedrawEvent.class){
                 RedrawEvent re = (RedrawEvent)event;
                 redrawBoardPositions(re.positions);
-            } else if(event.getClass() == RedrawEvent.class){
-
+            } else if(event.getClass() == RedrawAllEvent.class){
+                redrawBoard();
             }
 
         } else {

@@ -3,5 +3,11 @@
         android:title="@string/action_settings"
         android:orderInCategory="100"
         android:showAsAction="never" />
+
+    <item android:id="@+id/action_change_theme"
+          android:title="@string/action_change_theme"
+          android:orderInCategory="90"
+          android:showAsAction="never" />
+
 </menu>
 <!-- From: file:/C:/Users/Admin/AndroidStudioProjects/AndroidChessProject/AndroidChess/src/main/res/menu/main.xml -->
