@@ -9,5 +9,11 @@
           android:orderInCategory="90"
           android:showAsAction="never" />
 
+    <item android:id="@+id/action_new_game"
+          android:title="@string/action_new_game"
+          android:orderInCategory="80"
+          android:showAsAction="never" />
+
+
 </menu>
 <!-- From: file:/C:/Users/Admin/AndroidStudioProjects/AndroidChessProject/AndroidChess/src/main/res/menu/main.xml -->

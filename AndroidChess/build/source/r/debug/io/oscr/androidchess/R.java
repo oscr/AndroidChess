@@ -98,6 +98,7 @@ public final class R {
         public static final int H7=0x7f080012;
         public static final int H8=0x7f080009;
         public static final int action_change_theme=0x7f08004b;
+        public static final int action_new_game=0x7f08004c;
         public static final int action_settings=0x7f08004a;
         public static final int information=0x7f080049;
         public static final int playArea=0x7f080000;
@@ -120,9 +121,10 @@ public final class R {
         /**  From: file:/C:/Users/Admin/AndroidStudioProjects/AndroidChessProject/AndroidChess/src/main/res/values/strings.xml 
          */
         public static final int action_change_theme=0x7f050000;
-        public static final int action_settings=0x7f050001;
-        public static final int app_name=0x7f050002;
-        public static final int info=0x7f050003;
+        public static final int action_new_game=0x7f050001;
+        public static final int action_settings=0x7f050002;
+        public static final int app_name=0x7f050003;
+        public static final int info=0x7f050004;
     }
     public static final class style {
         /**  From: file:/C:/Users/Admin/AndroidStudioProjects/AndroidChessProject/AndroidChess/src/main/res/values/styles.xml 

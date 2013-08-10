@@ -30,6 +30,7 @@ import io.oscr.androidchess.model.event.ChessEvent;
 import io.oscr.androidchess.model.event.PromotionEvent;
 import io.oscr.androidchess.model.event.RedrawAllEvent;
 import io.oscr.androidchess.model.event.RedrawEvent;
+import io.oscr.androidchess.model.pieces.PieceColor;
 import io.oscr.androidchess.utils.Constants;
 
 import static io.oscr.androidchess.utils.Constants.FILES;
@@ -98,7 +99,7 @@ public class MainActivity extends Activity implements PropertyChangeListener {
     /**
      * Instead of redrawing whole board just redraw the changed parts!
      *
-     * @param positions
+     * @param positions to be redrawn
      */
     private void redrawBoardPositions(BoardPosition[] positions){
         for(BoardPosition bp : positions){
@@ -132,6 +133,9 @@ public class MainActivity extends Activity implements PropertyChangeListener {
         {
             case R.id.action_change_theme:
                 controller.changeColorTheme();
+                break;
+            case R.id.action_new_game:
+                controller.newGame(PieceColor.WHITE);
                 break;
         }
 

@@ -6,5 +6,6 @@
 
     <string name="info">Info</string>
     <string name="action_change_theme">Change Theme</string>
+    <string name="action_new_game">New Game</string>
 
 </resources>
