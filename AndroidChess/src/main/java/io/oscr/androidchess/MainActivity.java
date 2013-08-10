@@ -47,43 +47,26 @@ public class MainActivity extends Activity implements PropertyChangeListener {
         board = new Button[Constants.BOARD_SIZE][Constants.BOARD_SIZE];
         for(int i = 7; 0 <= i; i-- ){
             for(int j = 0; j <= 7; j++){
+
                 // The following finds items using names and not id number. Makes code
                 // more readable but is also more expensive operation!
                 String name = FILES[j] + (i+1);
                 int id = getResources().getIdentifier(name, "id", getPackageName());
-
                 board[j][i] = (Button)findViewById(id);
-                board[j][i].setBackgroundColor(controller.getBoardColor(j, i).getColor());
 
                 String pieceStr = controller.getPieceString(j, i);
                 if(pieceStr != null){
-
-                    // Have to scale the images or it looks really fubar
                     id = getResources().getIdentifier(pieceStr, "drawable", getPackageName());
                     Drawable d = getResources().getDrawable(id);
-
-                    //int width = Math.round(getResources().getDisplayMetrics().scaledDensity * 40);
                     LayerDrawable ld = new LayerDrawable(new Drawable[]{controller.getBoardColor(j, i), d});
                     board[j][i].setBackground(ld);
-                    //BitmapDrawable bd = (BitmapDrawable)getResources().getDrawable(id);
-                    //Bitmap b = Bitmap.createScaledBitmap(bd.getBitmap(),
-                    //        (int) (bd.getIntrinsicHeight() * 0.7),
-                    //        (int) (bd.getIntrinsicWidth() * 0.7),
-                     //       false);
-
-                    //Drawable sd = new BitmapDrawable(getResources(), b);
-                   // board[j][i].setCompoundDrawablesWithIntrinsicBounds(null, sd, null, controller.getBoardColor(j, i));
                 } else {
                     // DO NOT REMOVE THE FOLLOWING LOGIC!!!!!!!
                     // If this is not performed the 4 middle rows will act strange when pieces are
                     // placed upon them. MANY, MANY, MANY hours of debugging found this solution.
-                    //
-                    // When done trying to solve this please increment the following counter:
-                    // Hours wasted here: 34
                     LayerDrawable ld = new LayerDrawable(new Drawable[]{controller.getBoardColor(j, i)});
                     board[j][i].setBackground(ld);
                 }
-
                 board[j][i].setOnClickListener(new ButtonSelectionListener(j, i));
             }
         }
