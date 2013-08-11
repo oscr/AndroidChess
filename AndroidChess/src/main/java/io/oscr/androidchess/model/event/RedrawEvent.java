@@ -26,7 +26,7 @@ public final class RedrawEvent implements ChessEvent{
      * @throws NullPointerException if position argument is null or if it contains null.
      * @param positions the BoardPositions that should be redrawn.
      */
-    public RedrawEvent(BoardPosition[] positions){
+    public RedrawEvent(final BoardPosition[] positions){
         checkNotNull(positions, "Argument from was null. Expected non null");
 
         // Check that the array doesn't contain null

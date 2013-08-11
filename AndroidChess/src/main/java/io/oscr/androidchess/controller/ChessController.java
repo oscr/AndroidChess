@@ -28,7 +28,7 @@ public final class ChessController {
      * @throws NullPointerException if model argument is null.
      * @param model to delegate invocations to.
      */
-	public ChessController(IChessModel model){
+	public ChessController(final IChessModel model){
         checkNotNull(model, "Argument model was null. Expected non null");
 		this.model = model;
 	}
@@ -41,7 +41,7 @@ public final class ChessController {
      * @param rank zero indexed
      * @return a ColorDrawable for the specified
      */
-	public ColorDrawable getBoardColor(int file, int rank) {
+	public ColorDrawable getBoardColor(final int file, final int rank) {
 		return model.getBoardColor(new BoardPosition(file, rank));
 	}
 
@@ -52,19 +52,19 @@ public final class ChessController {
      * @param rank
      * @return
      */
-	public String getPieceString(int file, int rank) {
+	public String getPieceString(final int file, final int rank) {
 		return model.getPieceString(new BoardPosition(file, rank));
 	}
 
-	public void selectPosition(int file, int rank) {
+	public void selectPosition(final int file, final int rank) {
 		model.selectPosition(new BoardPosition(file, rank));
 	}
 
-    public void selectPosition(BoardPosition position) {
+    public void selectPosition(final BoardPosition position) {
         model.selectPosition(position);
     }
 
-	public void newGame(PieceColor white) {
+	public void newGame(final PieceColor white) {
 		model.newGame(white);
 	}
 
@@ -76,7 +76,7 @@ public final class ChessController {
 		model.changeColorTheme();
 	}
 
-	public void setPromotion(PieceType type, PromotionEvent promotion) {
+	public void setPromotion(final PieceType type, final PromotionEvent promotion) {
 		model.setPromotion(type, promotion.from, promotion.to);
 	}
 }

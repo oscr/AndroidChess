@@ -23,7 +23,7 @@ public final class PromotionEvent implements ChessEvent {
      * @param from where the piece moved from.
      * @param to where the piece moved to.
      */
-    public PromotionEvent(BoardPosition from, BoardPosition to) {
+    public PromotionEvent(final BoardPosition from, final BoardPosition to) {
         checkNotNull(from, "Argument from was null. Expected non null");
         checkNotNull(from, "Argument from was null. Expected non null");
 
