@@ -9,7 +9,7 @@ import java.io.File;
 public enum Constants {
 	;
 
-    public static final String[] FILES = {"A", "B", "C", "D", "E","F","G","H"};
+    public static final String[] FILES = {"A", "B", "C", "D", "E", "F", "G", "H"};
 	
 	// TODO Note that these are zero index. This is actually a little strange now 
 	// when BoardPositions can be created with standard notation (E1, B4... etc)
