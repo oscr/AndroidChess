@@ -59,7 +59,6 @@ public class ChessModel implements IObservable, IChessModel {
                     observers.firePropertyChange(null, false, new RedrawEvent(new BoardPosition[]{position}));
 
 				} else {
-
 					Set<BoardPosition> legalMoves = MovementRules.getLegalMoves(fromPosition, board);
 					if (legalMoves.contains(position) && isValidPosition(fromPosition, position)) {
 
@@ -96,9 +95,7 @@ public class ChessModel implements IObservable, IChessModel {
                                 observers.firePropertyChange(null, false, new RedrawEvent(new BoardPosition[]{bp, position}));
 
 							}
-
 						}
-
 					}
 				}
 			}

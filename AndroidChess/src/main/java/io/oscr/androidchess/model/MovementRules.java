@@ -34,14 +34,14 @@ public enum MovementRules {
 		case QUEEN:
 			return getLegalQueenMoves(from, board);
 		case KING:
-			return getLegalKingMOves(from, board);
+			return getLegalKingMoves(from, board);
 		default:
 			throw new IllegalStateException("Unknown piece type: " + piece.getPieceType());
 		}
 
 	}
 
-	private static Set<BoardPosition> getLegalKingMOves(BoardPosition from, IChessBoard board) {
+	private static Set<BoardPosition> getLegalKingMoves(BoardPosition from, IChessBoard board) {
 		final Set<BoardPosition> lm = new HashSet<BoardPosition>();
 
 		final int KING_MOVE_SQUARE_START = -1;
