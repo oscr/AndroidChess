@@ -191,7 +191,7 @@ public class MainActivity extends Activity implements PropertyChangeListener {
             tv.setText(controller.getDisplayInformation());
 
         } else {
-            // TODO Unknown event!
+            Log.d("Unknown event", event.toString());
         }
     }
 

@@ -6,12 +6,17 @@ import io.oscr.androidchess.model.pieces.PieceColor;
 
 import java.io.File;
 
+/**
+ * TODO
+ *
+ * Contains all constants used by the application.
+ */
 public enum Constants {
 	;
 
     public static final String[] FILES = {"A", "B", "C", "D", "E", "F", "G", "H"};
 	
-	// TODO Note that these are zero index. This is actually a little strange now 
+	// Note that these are zero index. This is actually a little strange now
 	// when BoardPositions can be created with standard notation (E1, B4... etc)
 	public static final int BOARD_MIN_POSITION = 0;
 	public static final int BOARD_MAX_POSITION = 7;
@@ -63,13 +68,28 @@ public enum Constants {
     public static final BoardPosition W_QUEENSIDE_ROOK_END = new BoardPosition("D1");
     public static final BoardPosition W_KINGSIDE_ROOK_START = new BoardPosition("H1");
     public static final BoardPosition W_QUEENSIDE_ROOK_START = new BoardPosition("A1");
-    
+
+    /**
+     * TODO
+     *
+     * Used to get the home row for a pawn. This allows easy detection if the pawn has moved
+     * or not.
+     *
+     * @param piece The pic
+     * @return the rank zero index which is the home row
+     */
 	public static int getHomeRow(IChessPiece piece) {
 		return piece.getPieceColor() == PieceColor.WHITE 
 				? Constants.WHITE_HOME_ROW
 				: Constants.BLACK_HOME_ROW;
 	}
 
+    /**
+     * TODO
+     *
+     * @param piece
+     * @return
+     */
 	public static int getMoveDelta(IChessPiece piece) {
 		return piece.getPieceColor() == PieceColor.WHITE 
 				? Constants.WHITE_PAWN_MOVE_DELTA
