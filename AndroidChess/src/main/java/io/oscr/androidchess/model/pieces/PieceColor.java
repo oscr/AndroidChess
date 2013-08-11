@@ -15,6 +15,5 @@ public enum PieceColor {
      */
 	public static PieceColor switchTurn(PieceColor current) {
 		return current == WHITE ? BLACK : WHITE;
-
 	}
 }
