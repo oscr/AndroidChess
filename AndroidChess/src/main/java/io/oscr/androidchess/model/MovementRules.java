@@ -18,7 +18,7 @@ public enum MovementRules {
 	;
 
 	public static Set<BoardPosition> getLegalMoves(BoardPosition from, ChessBoard board) {
-		checkNotNull(from, "Arguement from was null. Expected not null");
+		checkNotNull(from, "Argument from was null. Expected not null");
 		checkNotNull(board, "Argument board was null. Expected not null");
 
 		IChessPiece piece = board.getChessPiece(from);
