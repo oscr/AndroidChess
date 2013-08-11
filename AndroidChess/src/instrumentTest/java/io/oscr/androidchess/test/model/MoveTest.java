@@ -6,7 +6,7 @@ import io.oscr.androidchess.model.BoardPosition;
 import io.oscr.androidchess.model.Move;
 
 /**
- * Testing the Move class according to the specification and guarantees provided by the Move class.
+ * Testing the Move class according to the specification and guarantees provided by it.
  *
  * Always using the Arrange-Act-Assert pattern
  */
