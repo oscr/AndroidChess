@@ -40,6 +40,9 @@ public class MoveTest extends TestCase {
 
         } catch(NullPointerException npe){
             // Do nothing here
+
+        } catch(Exception e){
+            fail("Wrong type of exception thrown");
         }
     }
 
@@ -57,6 +60,9 @@ public class MoveTest extends TestCase {
 
         } catch(NullPointerException npe){
             // Do nothing here
+
+        } catch(Exception e){
+            fail("Wrong type of exception thrown");
         }
     }
 }
