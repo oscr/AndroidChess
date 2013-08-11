@@ -6,6 +6,9 @@ import io.oscr.androidchess.model.pieces.PieceColor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 
+/**
+ * TODO
+ */
 public class FunnyTheme implements IChessTheme {
     private final ColorDrawable selectedColor = new ColorDrawable(Color.YELLOW);
     private final ColorDrawable oddColor = new ColorDrawable(Color.RED);
