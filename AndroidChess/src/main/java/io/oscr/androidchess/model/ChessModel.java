@@ -268,14 +268,14 @@ public class ChessModel implements IObservable, IChessModel {
 
 	@Override
 	public String getDisplayInformation() {
-		String information = "Turn: " + board.getTurn();
+		String information = "" + board.getTurn();
 
 		if (isCheckmate()) {
 			return information + " is checkmate!";
 		} else if (isCheck()) {
 			return information + " is check!";
 		} else {
-			return information;
+			return "Turn: " + information;
 		}
 
 	}
