@@ -39,7 +39,7 @@ public enum MovementRules {
      * @param board the current gameboard.
      * @return a set of legal BoardPosition.
      */
-	public static Set<BoardPosition> getLegalMoves(BoardPosition from, IChessBoard board) {
+	public static Set<BoardPosition> getLegalMoves(final BoardPosition from, final IChessBoard board) {
 		checkNotNull(from, "Argument from was null. Expected not null");
 		checkNotNull(board, "Argument board was null. Expected not null");
 
@@ -71,7 +71,7 @@ public enum MovementRules {
      * @param board the current GameBoard.
      * @return a set of legal BoardPosition.
      */
-	private static Set<BoardPosition> getLegalKingMoves(BoardPosition from, IChessBoard board) {
+	private static Set<BoardPosition> getLegalKingMoves(final BoardPosition from, final IChessBoard board) {
 		final Set<BoardPosition> lm = new HashSet<BoardPosition>();
 
         /*
@@ -155,8 +155,8 @@ public enum MovementRules {
      * @param board the current GameBoard.
      * @return a set of legal BoardPosition.
      */
-	private static Set<BoardPosition> getLegalQueenMoves(BoardPosition from, IChessBoard board) {
-		Set<BoardPosition> lm = new HashSet<BoardPosition>();
+	private static Set<BoardPosition> getLegalQueenMoves(final BoardPosition from, final IChessBoard board) {
+        final Set<BoardPosition> lm = new HashSet<BoardPosition>();
 
         // Add all legal Bishop moves
 		for (int[] delta : Constants.BISHOP_MOVE_DELTA) {
@@ -179,8 +179,8 @@ public enum MovementRules {
      * @param board the current GameBoard.
      * @return a set of legal BoardPosition.
      */
-	private static Set<BoardPosition> getLegalRookMoves(BoardPosition from, IChessBoard board) {
-		Set<BoardPosition> lm = new HashSet<BoardPosition>();
+	private static Set<BoardPosition> getLegalRookMoves(final BoardPosition from, final IChessBoard board) {
+        final Set<BoardPosition> lm = new HashSet<BoardPosition>();
 
 		for (int[] delta : Constants.ROOK_MOVE_DELTA) {
 			// The order of the delta content doesn't matter really
@@ -196,8 +196,8 @@ public enum MovementRules {
      * @param board the current GameBoard.
      * @return a set of legal BoardPosition.
      */
-    private static Set<BoardPosition> getLegalBishopMoves(BoardPosition from, IChessBoard board) {
-        Set<BoardPosition> lm = new HashSet<BoardPosition>();
+    private static Set<BoardPosition> getLegalBishopMoves(final BoardPosition from, final IChessBoard board) {
+        final Set<BoardPosition> lm = new HashSet<BoardPosition>();
 
         for (int[] delta : Constants.BISHOP_MOVE_DELTA) {
             // The order of the delta content doesn't matter really
@@ -217,8 +217,8 @@ public enum MovementRules {
      * @param board the current GameBoard.
      * @return a set of legal BoardPosition.
      */
-	private static Set<BoardPosition> getLegalKnightMoves(BoardPosition from, IChessBoard board) {
-		Set<BoardPosition> lm = new HashSet<BoardPosition>();
+	private static Set<BoardPosition> getLegalKnightMoves(final BoardPosition from, final IChessBoard board) {
+        final Set<BoardPosition> lm = new HashSet<BoardPosition>();
 		final int rank = from.getRank();
 		final int file = from.getFile();
 
@@ -268,54 +268,53 @@ public enum MovementRules {
      */
 	private static Set<BoardPosition> getLegalPawnMoves(final BoardPosition from, final IChessBoard board) {
 		final Set<BoardPosition> lm = new HashSet<BoardPosition>();
+        final IChessPiece PIECE = board.getChessPiece(from);
+        final int HOME_ROW = Constants.getHomeRow(PIECE);
+        final int MOVE_DELTA = Constants.getMoveDelta(PIECE);
+        final int FILE = from.getFile();
+        final int RANK = from.getRank();
 
-		// If Pawn is on the last row it will be promoted.
-		if (from.getRank() == Constants.WHITE_PAWN_LAST_RANK || from.getRank() == Constants.BLACK_PAWN_LAST_RANK) {
-			return lm;
-		}
+        // If the pawn is on the last row it will be promoted
+        if (RANK == Constants.WHITE_PAWN_LAST_RANK || RANK == Constants.BLACK_PAWN_LAST_RANK) {
+            return lm;
+        }
 
-		IChessPiece piece = board.getChessPiece(from);
-		final int HOME_ROW = Constants.getHomeRow(piece);
-		final int MOVE_DELTA = Constants.getMoveDelta(piece);
-
-		final int file = from.getFile();
-		final int rank = from.getRank();
-
-		// Is en passant a possible move?
+		// Check if en passant capture is possible
 		BoardPosition position = board.getEnPassantPawn();
 		if(position != null){
 			// In order to en passant we need to be on the same rank.
 			if(from.getRank() == position.getRank()
-					// And on either 1 position higher or lower file
+					// Calculates if the difference in file is 1 either positive or negative.
+					// If that is the case we can capture en passant!
 					&& (Math.abs(from.getFile() - position.getFile()) == 1)){
 				lm.add(board.getEnPassant());
 			}
 		}
 
 		// Check if square in front is available
-		if (board.isEmpty(file, rank + MOVE_DELTA)) {
-			lm.add(new BoardPosition(file, rank + MOVE_DELTA));
+		if (board.isEmpty(FILE, RANK + MOVE_DELTA)) {
+			lm.add(new BoardPosition(FILE, RANK + MOVE_DELTA));
 
 			// If we are on the starting row and nothing is in the way we can
 			// take two steps forward
-			if (rank == HOME_ROW && board.isEmpty(file, rank + 2 * MOVE_DELTA)) {
-				lm.add(new BoardPosition(file, rank + 2 * MOVE_DELTA));
+			if (RANK == HOME_ROW && board.isEmpty(FILE, RANK + 2 * MOVE_DELTA)) {
+				lm.add(new BoardPosition(FILE, RANK + 2 * MOVE_DELTA));
 			}
 		}
 
 		// Check for capture left
-		if (file > 0) {
-			IChessPiece left = board.getChessPiece(file - 1, rank + MOVE_DELTA);
-			if (left != null && left.getPieceColor() != piece.getPieceColor()) {
-				lm.add(new BoardPosition(file - 1, rank + MOVE_DELTA));
+		if (FILE > 0) {
+			IChessPiece left = board.getChessPiece(FILE - 1, RANK + MOVE_DELTA);
+			if (left != null && left.getPieceColor() != PIECE.getPieceColor()) {
+				lm.add(new BoardPosition(FILE - 1, RANK + MOVE_DELTA));
 			}
 		}
 
 		// Check for capture right
-		if (file < 7) {
-			IChessPiece right = board.getChessPiece(file + 1, rank + MOVE_DELTA);
-			if (right != null && right.getPieceColor() != piece.getPieceColor()) {
-				lm.add(new BoardPosition(file + 1, rank + MOVE_DELTA));
+		if (FILE < 7) {
+			IChessPiece right = board.getChessPiece(FILE + 1, RANK + MOVE_DELTA);
+			if (right != null && right.getPieceColor() != PIECE.getPieceColor()) {
+				lm.add(new BoardPosition(FILE + 1, RANK + MOVE_DELTA));
 			}
 		}
 		return lm;

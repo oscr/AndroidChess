@@ -383,7 +383,7 @@ public class ChessModel implements IObservable, IChessModel {
             throw new IllegalStateException("Board in unacceptable state (null or not ChessBoard class");
         }
 
-		board.move(from, to);
+		board.move(from, to, null);
 		boolean isValid = !isCheck();
 		board = backupBoard;
 
