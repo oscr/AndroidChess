@@ -20,7 +20,6 @@ public final class BoardPosition implements Serializable {
 
     // Used to convert a letter to int.
     private static final String stringToInt = "ABCDEFGH";
-
 	private final int file;
 	private final int rank;
 
@@ -42,7 +41,6 @@ public final class BoardPosition implements Serializable {
 
 		// -1 because chess board coordinates aren't zero indexed
 		rank = Integer.parseInt(position.substring(1)) - 1;
-
         checkPositionIndex(file, Constants.BOARD_MAX_POSITION);
 		checkPositionIndex(rank, Constants.BOARD_MAX_POSITION);
 	}

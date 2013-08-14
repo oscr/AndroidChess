@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/AndroidChess/AndroidChess.iml" filepath="$PROJECT_DIR$/AndroidChess/AndroidChess.iml" />
+      <module fileurl="file://$PROJECT_DIR$/AndroidChess/AndroidChess-AndroidChess.iml" filepath="$PROJECT_DIR$/AndroidChess/AndroidChess-AndroidChess.iml" />
       <module fileurl="file://$PROJECT_DIR$/AndroidChessProject.iml" filepath="$PROJECT_DIR$/AndroidChessProject.iml" />
     </modules>
   </component>

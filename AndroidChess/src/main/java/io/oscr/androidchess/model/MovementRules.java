@@ -320,48 +320,79 @@ public enum MovementRules {
 		return lm;
 	}
 
+    /**
+     * Will add the BoardPosition to that is represented by the toFile and toRank arguments to the
+     * legalMoves Set if it's a valid position. In order to validate that it is a valid position
+     * the following things are checked:
+     * <ul>
+     * <li>That the toFile and toRank is withing the board limitations.</li>
+     * <li>That the to position is either empty or contains a piece of opposite color.</li>
+     * </ul>
+     *
+     * @param board current GameBoard.
+     * @param legalMoves Set to add BoardPosition to if legal move.
+     * @param from What BoardPosition piece is moving from.
+     * @param toFile The file of the to BoardPosition.
+     * @param toRank The rank of the to BoardPosition.
+     */
 	private static void addPositionIfValid(final IChessBoard board, final Set<BoardPosition> legalMoves,
 			final BoardPosition from, final int toFile, final int toRank) {
-
-		BoardPosition to;
 		try {
-			to = new BoardPosition(toFile, toRank);
+            // Will throw IllegalArgumentException if invalid position.
+			BoardPosition to = new BoardPosition(toFile, toRank);
 
-		} catch (IllegalArgumentException iae) {
-			return;
-		}
-
-		// Check if to square is either empty or opposite color so that it
-		// may be captured.
-		IChessPiece piece = board.getChessPiece(to);
-		if (piece == null || piece.getPieceColor() != board.getChessPiece(from).getPieceColor()) {
-			legalMoves.add(to);
-		}
+            // Add position if either empty or contains piece of opposite color
+            IChessPiece piece = board.getChessPiece(to);
+            if (piece == null || piece.getPieceColor() != board.getChessPiece(from).getPieceColor()) {
+                legalMoves.add(to);
+            }
+        } catch (IllegalArgumentException iae) {
+            // There is nothing we can to here.
+        }
 	}
 
+    /**
+     * Adds all BoardPositions beginning from a BoardPosition from until it either finds the edge of
+     * the board or another chess piece. The direction of the BoardPositions to add is given by the
+     * DELTA_FILE and DELTA_RANK parameters. These specify how the movement should change for each
+     * step.
+     *
+     * @param lm set to add all valid BoardPositions to.
+     * @param board the current GameBoard.
+     * @param from BoardPosition to start from.
+     * @param DELTA_FILE the change in file for each step.
+     * @param DELTA_RANK the change in rank for each step.
+     */
     private static void addAllPosition(final Set<BoardPosition> lm, final IChessBoard board, final BoardPosition from,
                                        final int DELTA_FILE, final int DELTA_RANK) {
-
-        // Declaration
         for (int file = from.getFile() + DELTA_FILE, rank = from.getRank() + DELTA_RANK;
-            // Condition
-             Constants.BOARD_MIN_POSITION <= file && file <= Constants.BOARD_MAX_POSITION
-                     && Constants.BOARD_MIN_POSITION <= rank && rank <= Constants.BOARD_MAX_POSITION;
-            // Step
-             file += DELTA_FILE, rank += DELTA_RANK) {
+            ; file += DELTA_FILE, rank += DELTA_RANK) {
 
-            if (board.isEmpty(file, rank)) {
-                lm.add(new BoardPosition(file, rank));
+            // Check if current position is within board limitations
+            BoardPosition to;
+            try {
+                to = new BoardPosition(file, rank);
+            } catch (IllegalArgumentException iae) {
+                // Otherwise return
+                return;
+            }
+
+            // If the position is empty then we can check next square.
+            if (board.isEmpty(to)) {
+                lm.add(to);
                 continue;
-
             }
 
-            if (board.getChessPiece(file, rank).getPieceColor() != board.getChessPiece(from).getPieceColor()) {
-                lm.add(new BoardPosition(file, rank));
-
+            // If not square isn't empty, then compare color of the two pieces.
+            if (board.getChessPiece(to).getPieceColor() != board.getChessPiece(from).getPieceColor()) {
+                lm.add(to);
             }
+
+            /*
+             * Since the current square isn't empty we can move beyond our current position. Therefore
+             * no more positions can be added and we must break the loop.
+             */
             break;
-
         }
     }
 }

@@ -11,10 +11,14 @@ import io.oscr.androidchess.model.BoardPosition;
  */
 public class BoardPositionTest extends TestCase {
 
+    /*
+     * Creating a valid position gives no error.
+     */
     public void test_createNormalPosition() throws Exception {
         String position = "E2";
         BoardPosition e2 = new BoardPosition(position);
         assertNotNull(e2);
+        assertTrue(e2.toString().equals("E2"));
     }
 
     public void test_nullArgumentGivesException() throws Exception {
