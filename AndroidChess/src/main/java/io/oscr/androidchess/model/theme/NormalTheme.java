@@ -58,30 +58,21 @@ public class NormalTheme implements IChessTheme {
             return null;
         }
         String colorPrefix = chessPiece.getPieceColor() == PieceColor.WHITE ? "w" : "b";
-        String pieceSuffix = null;
-
         switch (chessPiece.getPieceType()) {
             case PAWN:
-                pieceSuffix = "p";
-                break;
+                return colorPrefix + "p";
             case ROOK:
-                pieceSuffix = "r";
-                break;
+                return colorPrefix + "r";
             case KNIGHT:
-                pieceSuffix = "n";
-                break;
+                return colorPrefix + "n";
             case BISHOP:
-                pieceSuffix = "b";
-                break;
+                return colorPrefix +  "b";
             case QUEEN:
-                pieceSuffix = "q";
-                break;
+                return colorPrefix + "q";
             case KING:
-                pieceSuffix = "k";
-                break;
+                return colorPrefix + "k";
             default:
                 throw new IllegalStateException("Unknown piece state" + chessPiece.getPieceType().toString());
         }
-        return colorPrefix + pieceSuffix;
     }
 }
