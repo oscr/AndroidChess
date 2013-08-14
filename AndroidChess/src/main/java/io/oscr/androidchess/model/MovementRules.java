@@ -147,23 +147,38 @@ public enum MovementRules {
 		return lm;
 	}
 
+    /**
+     * Calculates all legal moves for the Queen. Since the Queen moves like a combination of a Rook
+     * and Bishop the logic for these two pieces is reused and the result combined for the Queen.
+     *
+     * @param from what position is the piece placed on.
+     * @param board the current GameBoard.
+     * @return a set of legal BoardPosition.
+     */
 	private static Set<BoardPosition> getLegalQueenMoves(BoardPosition from, IChessBoard board) {
 		Set<BoardPosition> lm = new HashSet<BoardPosition>();
 
+        // Add all legal Bishop moves
 		for (int[] delta : Constants.BISHOP_MOVE_DELTA) {
 			// The order of the delta content doesn't matter really
 			addAllPosition(lm, board, from, delta[0], delta[1]);
 		}
 
+        // Add all legal Rook moves
 		for (int[] delta : Constants.ROOK_MOVE_DELTA) {
 			// The order of the delta content doesn't matter really
 			addAllPosition(lm, board, from, delta[0], delta[1]);
 		}
-
 		return lm;
-
 	}
 
+    /**
+     * Calculates all legal moves for the Rook.
+     *
+     * @param from what position is the piece placed on.
+     * @param board the current GameBoard.
+     * @return a set of legal BoardPosition.
+     */
 	private static Set<BoardPosition> getLegalRookMoves(BoardPosition from, IChessBoard board) {
 		Set<BoardPosition> lm = new HashSet<BoardPosition>();
 
@@ -171,79 +186,86 @@ public enum MovementRules {
 			// The order of the delta content doesn't matter really
 			addAllPosition(lm, board, from, delta[0], delta[1]);
 		}
-
 		return lm;
 	}
 
-	private static void addAllPosition(final Set<BoardPosition> lm, final IChessBoard board, final BoardPosition from,
-			final int DELTA_FILE, final int DELTA_RANK) {
+    /**
+     * Calculates all legal moves for the Bishop.
+     *
+     * @param from what position is the piece placed on.
+     * @param board the current GameBoard.
+     * @return a set of legal BoardPosition.
+     */
+    private static Set<BoardPosition> getLegalBishopMoves(BoardPosition from, IChessBoard board) {
+        Set<BoardPosition> lm = new HashSet<BoardPosition>();
 
-		// Declaration
-		for (int file = from.getFile() + DELTA_FILE, rank = from.getRank() + DELTA_RANK;
-		// Condition
-		Constants.BOARD_MIN_POSITION <= file && file <= Constants.BOARD_MAX_POSITION
-				&& Constants.BOARD_MIN_POSITION <= rank && rank <= Constants.BOARD_MAX_POSITION;
-		// Step
-		file += DELTA_FILE, rank += DELTA_RANK) {
-
-			if (board.isEmpty(file, rank)) {
-				lm.add(new BoardPosition(file, rank));
-				continue;
-
-			}
-
-			if (board.getChessPiece(file, rank).getPieceColor() != board.getChessPiece(from).getPieceColor()) {
-				lm.add(new BoardPosition(file, rank));
-
-			}
-			break;
-
-		}
-	}
-
+        for (int[] delta : Constants.BISHOP_MOVE_DELTA) {
+            // The order of the delta content doesn't matter really
+            addAllPosition(lm, board, from, delta[0], delta[1]);
+        }
+        return lm;
+    }
+    /**
+     * Calculates all legal moves for the Knight. Since it's movement is a little special all attempts
+     * to iterate the movement instead of listing it as done has resulted in harder to read code.
+     *
+     * The annotation for the moves describes the L movement of the Knight. For example Upper Left
+     * refers to the position above the Knight (higher rank) and to left. So if the Knight is on
+     * B1 then Upper Left is A3.
+     *
+     * @param from what position is the piece placed on.
+     * @param board the current GameBoard.
+     * @return a set of legal BoardPosition.
+     */
 	private static Set<BoardPosition> getLegalKnightMoves(BoardPosition from, IChessBoard board) {
 		Set<BoardPosition> lm = new HashSet<BoardPosition>();
-
 		final int rank = from.getRank();
 		final int file = from.getFile();
 
-		// upper left
+		// Upper left
 		addPositionIfValid(board, lm, from, file - 1, rank + 2);
 
-		// upper right
+		// Upper right
 		addPositionIfValid(board, lm, from, file + 1, rank + 2);
 
-		// left upper
+		// Left Upper
 		addPositionIfValid(board, lm, from, file - 2, rank + 1);
 
-		// left lower
+		// Left Lower
 		addPositionIfValid(board, lm, from, file - 2, rank - 1);
 
-		// lower left
+		// Lower Left
 		addPositionIfValid(board, lm, from, file - 1, rank - 2);
 
-		// lower right
+		// Lower Right
 		addPositionIfValid(board, lm, from, file + 1, rank - 2);
 
-		// right upper
+		// Right Upper
 		addPositionIfValid(board, lm, from, file + 2, rank + 1);
 
-		// right lower
+		// Right Lower
 		addPositionIfValid(board, lm, from, file + 2, rank - 1);
-
 		return lm;
 	}
 
-	private static Set<BoardPosition> getLegalBishopMoves(BoardPosition from, IChessBoard board) {
-		Set<BoardPosition> lm = new HashSet<BoardPosition>();
-
-		for (int[] delta : Constants.BISHOP_MOVE_DELTA) {
-			// The order of the delta content doesn't matter really
-			addAllPosition(lm, board, from, delta[0], delta[1]);
-		}
-		return lm;
-	}
-
+    /**
+     * Calculates all legal moves for the Pawn.
+     *
+     * There are a number of special rules that need to be taken into consideration when considering
+     * the pawn. These rules are:
+     *
+     * <ul>
+     * <li> Promotion. If the pawn is on the final row it will be promoted. Different for Black and White.</li>
+     * <li> En Passant. The rule that allows a pawn to capture another pawn when it's beside.</li>
+     * <li> Two steps first move. The pawn may move two squars forward if it is it's first move.</li>
+     * <li> Movement forward, capture to the side. Making it's movement pattern different from all other
+     * pieces.</li>
+     *
+     * </ul>
+     * @param from what position is the piece placed on.
+     * @param board the current GameBoard.
+     * @return a set of legal BoardPosition.
+     */
 	private static Set<BoardPosition> getLegalPawnMoves(final BoardPosition from, final IChessBoard board) {
 		final Set<BoardPosition> lm = new HashSet<BoardPosition>();
 
@@ -262,14 +284,14 @@ public enum MovementRules {
 		// Is en passant a possible move?
 		BoardPosition position = board.getEnPassantPawn();
 		if(position != null){
-			// In order to en passant we need to be on the same rank. 
-			if(from.getRank() == position.getRank() 
+			// In order to en passant we need to be on the same rank.
+			if(from.getRank() == position.getRank()
 					// And on either 1 position higher or lower file
 					&& (Math.abs(from.getFile() - position.getFile()) == 1)){
 				lm.add(board.getEnPassant());
 			}
 		}
-		
+
 		// Check if square in front is available
 		if (board.isEmpty(file, rank + MOVE_DELTA)) {
 			lm.add(new BoardPosition(file, rank + MOVE_DELTA));
@@ -296,7 +318,6 @@ public enum MovementRules {
 				lm.add(new BoardPosition(file + 1, rank + MOVE_DELTA));
 			}
 		}
-
 		return lm;
 	}
 
@@ -318,4 +339,30 @@ public enum MovementRules {
 			legalMoves.add(to);
 		}
 	}
+
+    private static void addAllPosition(final Set<BoardPosition> lm, final IChessBoard board, final BoardPosition from,
+                                       final int DELTA_FILE, final int DELTA_RANK) {
+
+        // Declaration
+        for (int file = from.getFile() + DELTA_FILE, rank = from.getRank() + DELTA_RANK;
+            // Condition
+             Constants.BOARD_MIN_POSITION <= file && file <= Constants.BOARD_MAX_POSITION
+                     && Constants.BOARD_MIN_POSITION <= rank && rank <= Constants.BOARD_MAX_POSITION;
+            // Step
+             file += DELTA_FILE, rank += DELTA_RANK) {
+
+            if (board.isEmpty(file, rank)) {
+                lm.add(new BoardPosition(file, rank));
+                continue;
+
+            }
+
+            if (board.getChessPiece(file, rank).getPieceColor() != board.getChessPiece(from).getPieceColor()) {
+                lm.add(new BoardPosition(file, rank));
+
+            }
+            break;
+
+        }
+    }
 }
