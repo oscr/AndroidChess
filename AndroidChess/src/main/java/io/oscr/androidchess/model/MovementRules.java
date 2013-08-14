@@ -11,17 +11,40 @@ import java.util.Set;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * TODO Check that all methods are side effect free 
+ * Immutable. No side effects.
  *
+ * MovementRules provides all movement logic for the game. In other words given a position and a
+ * game board it will find all legal moves for the piece placed on that position.
+ *
+ * MovementRules is guaranteed to be side effect free. No changes will be made to the global game state.
  */
 public enum MovementRules {
 	;
 
+    /**
+     * Given a BoardPosition from and IGameBoard board will return all legal moves for the piece
+     * placed on from square in the board with some limitations.
+     *
+     * The set that is returned contains all legal moves possible for the piece to perform, and
+     * where there isn't a friendly piece blocking it from moving to that position. However the
+     * move may place the King in check or fail to stop a check. This is not validated by this
+     * method and needs to be checked separately. Since it's a set it's guaranteed to be unique.
+     *
+     * The method will throw NullPointerException if the from or board parameter is null. Also
+     * if there is no IChessPiece in the position specified by from in board a NullPointerException
+     * will be thrown.
+     *
+     * @throws NullPointerException is from, to or the from position in board is null.
+     * @param from what position is the piece placed on.
+     * @param board the current gameboard.
+     * @return a set of legal BoardPosition.
+     */
 	public static Set<BoardPosition> getLegalMoves(BoardPosition from, IChessBoard board) {
 		checkNotNull(from, "Argument from was null. Expected not null");
 		checkNotNull(board, "Argument board was null. Expected not null");
 
 		IChessPiece piece = board.getChessPiece(from);
+        checkNotNull(piece, "Piece was null. Excepted not null");
 		switch (piece.getPieceType()) {
 		case PAWN:
 			return getLegalPawnMoves(from, board);
@@ -38,7 +61,6 @@ public enum MovementRules {
 		default:
 			throw new IllegalStateException("Unknown piece type: " + piece.getPieceType());
 		}
-
 	}
 
 	private static Set<BoardPosition> getLegalKingMoves(BoardPosition from, IChessBoard board) {
@@ -280,6 +302,5 @@ public enum MovementRules {
 		if (piece == null || piece.getPieceColor() != board.getChessPiece(from).getPieceColor()) {
 			legalMoves.add(to);
 		}
-
 	}
 }
