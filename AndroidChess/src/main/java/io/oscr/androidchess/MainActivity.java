@@ -37,9 +37,21 @@ import io.oscr.androidchess.utils.Constants;
 
 import static io.oscr.androidchess.utils.Constants.FILES;
 
+/**
+ * Represents the View in the MVC model.
+ *
+ * The view implements PropertyChangeListener in order to receive notifications from the model when
+ * changes occur as part of the Observer pattern.
+ */
 public class MainActivity extends Activity implements PropertyChangeListener {
-
+    /**
+     * Matrix containing the whole chessboard represented as buttons.
+     */
     private Button[][] board;
+
+    /**
+     * Reference to the Controller in the MVC pattern.
+     */
     private ChessController controller;
 
     @Override
@@ -47,7 +59,11 @@ public class MainActivity extends Activity implements PropertyChangeListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Set up game and listeners
+        /*
+         * I would have loved to have a factory perform the setup of model, view and controller
+         * relations. However I'm unsure how to do this on the Android platform. So as ugly as it
+         * is it's performed here. Adds the view as a listener to the ChessModel.
+         */
         IChessModel model = new ChessModel();
         controller = new ChessController(model);
         model.addObserver(this);
@@ -62,10 +78,13 @@ public class MainActivity extends Activity implements PropertyChangeListener {
                 int id = getResources().getIdentifier(name, "id", getPackageName());
                 board[j][i] = (Button)findViewById(id);
 
+                // If there is a Chess Piece on that position
                 String pieceStr = controller.getPieceString(j, i);
                 if(pieceStr != null){
+                    // Obtains the drawable piece image resource
                     id = getResources().getIdentifier(pieceStr, "drawable", getPackageName());
                     Drawable d = getResources().getDrawable(id);
+                    // Create a combined drawable containing both background and piece.
                     LayerDrawable ld = new LayerDrawable(new Drawable[]{controller.getBoardColor(j, i), d});
                     board[j][i].setBackground(ld);
                 } else {
@@ -78,53 +97,62 @@ public class MainActivity extends Activity implements PropertyChangeListener {
                 board[j][i].setOnClickListener(new ButtonSelectionListener(j, i));
             }
         }
-
         TextView tv = (TextView)findViewById(R.id.information);
         tv.setText(controller.getDisplayInformation());
-
     }
 
+    /**
+     * Redraws the whole chessboard.
+     */
     private void redrawBoard(){
         for(int i = 7; 0 <= i; i-- ){
             for(int j = 0; j <= 7; j++){
                 board[j][i].setBackground(null);
                 board[j][i].setBackgroundColor(controller.getBoardColor(j, i).getColor());
 
+                // If there is a Chess Piece on that position
                 String pieceStr = controller.getPieceString(j, i);
                 if(pieceStr != null){
+                    // Obtains the drawable piece image resource
                     int id = getResources().getIdentifier(pieceStr, "drawable", getPackageName());
                     Drawable d = getResources().getDrawable(id);
+                    // Create a combined drawable containing both background and piece.
                     LayerDrawable ld = new LayerDrawable(new Drawable[]{controller.getBoardColor(j, i), d});
                     board[j][i].setBackground(ld);
-
                 }
             }
         }
     }
 
     /**
-     * Instead of redrawing whole board just redraw the changed parts!
+     * Allows the redrawing of a arbitrary number of buttons instead of having to redraw the whole
+     * board. This has proved to be somewhat more efficient than just redrawing everything.
      *
      * @param positions to be redrawn
      */
-    private void redrawBoardPositions(BoardPosition[] positions){
+    private void redrawBoardPositions(final BoardPosition[] positions){
         for(BoardPosition bp : positions){
-            int file = bp.getFile();
-            int rank = bp.getRank();
-
+            final int file = bp.getFile();
+            final int rank = bp.getRank();
             board[file][rank].setBackground(null);
             board[file][rank].setBackgroundColor(controller.getBoardColor(file, rank).getColor());
 
+            // If there is a Chess Piece on that position
             String pieceStr = controller.getPieceString(file, rank);
             if(pieceStr != null){
+                // Obtains the drawable piece image resource
                 int id = getResources().getIdentifier(pieceStr, "drawable", getPackageName());
                 Drawable d = getResources().getDrawable(id);
+                // Create a combined drawable containing both background and piece.
                 LayerDrawable ld = new LayerDrawable(new Drawable[]{controller.getBoardColor(file, rank), d});
                 board[file][rank].setBackground(ld);
             }
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -132,6 +160,9 @@ public class MainActivity extends Activity implements PropertyChangeListener {
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
@@ -144,19 +175,27 @@ public class MainActivity extends Activity implements PropertyChangeListener {
                 controller.newGame(PieceColor.WHITE);
                 break;
         }
-
         return true;
     }
 
+    /**
+     * When the model has changed or the model needs input (as in the case of Pawn promotion)
+     * a PropertyChangeEvent is sent to all observers. Here the behavior of the View is specified.
+     *
+     * @param propertyChangeEvent to handle.
+     */
     @Override
     public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+
+        // The event should be of type ChessEvent otherwise something strange is
         Object event = propertyChangeEvent.getNewValue();
         if(event instanceof ChessEvent){
+            // Handles Pawn promotion
             if(event.getClass() == PromotionEvent.class){
-
                 final PromotionEvent pe = (PromotionEvent)event;
                 CharSequence[] types = {PieceType.QUEEN.toString(), PieceType.ROOK.toString(), PieceType.BISHOP.toString(), PieceType.KNIGHT.toString()};
 
+                // Build the dialog and handle the input from user
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle("Promote pawn to");
                 builder.setItems(types, new DialogInterface.OnClickListener() {
@@ -180,24 +219,39 @@ public class MainActivity extends Activity implements PropertyChangeListener {
                 });
                 builder.show();
 
+            // Only a few buttons need to be redrawn.
             } else if(event.getClass() == RedrawEvent.class){
                 RedrawEvent re = (RedrawEvent)event;
                 redrawBoardPositions(re.positions);
+
+            // Whole board needs to be redrawn.
             } else if(event.getClass() == RedrawAllEvent.class){
                 redrawBoard();
             }
-
             TextView tv = (TextView)findViewById(R.id.information);
             tv.setText(controller.getDisplayInformation());
 
+        // If we got some other event than ChessEvent log for later inspection.
         } else {
             Log.d("Unknown event", event.toString());
         }
     }
 
+    /**
+     * Listener class for buttons. Each has it's own BoardPosition that is passed to the controller
+     * as reference in order to identify what button was pushed.
+     */
     private class ButtonSelectionListener implements View.OnClickListener {
+        // What position on the board the button represents.
         private final BoardPosition position;
 
+        /**
+         * Creates a button selection listener with internal BoardPosition to represent what
+         * square on the board the button is.
+         *
+         * @param file zero indexed file.
+         * @param rank zero indexed rank.
+         */
         private ButtonSelectionListener(int file, int rank){
             position = new BoardPosition(file, rank);
         }
