@@ -290,12 +290,12 @@ public class ChessModel implements IObservable, IChessModel {
 	}
 
 	/**
-	 * This will check if the current player is in check
+	 * Will check if the current player defined by turn is in check.
 	 * 
-	 * @return
+	 * @return true if in check, otherwise false.
 	 */
 	private boolean isCheck() {
-		// Find the King
+		// Find the King on the chess board
 		BoardPosition kingPosition = null;
 		for (int file = 0; file <= Constants.BOARD_MAX_POSITION; file++) {
 			for (int rank = 0; rank <= Constants.BOARD_MAX_POSITION; rank++) {
@@ -306,13 +306,20 @@ public class ChessModel implements IObservable, IChessModel {
 			}
 		}
 
-		// If this ever happens... Disaster
+		/*
+		 * A King piece should always be found! If we can't find one there is something
+		 * is very wrong. Therefore we make sure that the game is in an correct state.
+		 */
 		if (kingPosition == null) {
 			throw new IllegalStateException("Could not find the " + board.getTurn() + " KING!!!");
 
 		}
 
-		// If any piece can capture the King then it's check
+        /*
+         * The following algorithm determines if the King is in check. It does so by checking if
+         * any opposing piece can make a move that reaches the BoardPosition where the King is
+         * placed.
+         */
 		for (int file = 0; file <= Constants.BOARD_MAX_POSITION; file++) {
 			for (int rank = 0; rank <= Constants.BOARD_MAX_POSITION; rank++) {
 				IChessPiece piece = board.getChessPiece(file, rank);
@@ -323,9 +330,7 @@ public class ChessModel implements IObservable, IChessModel {
 				}
 			}
 		}
-
 		return false;
-
 	}
 
 	private boolean isCheckmate() {
@@ -390,6 +395,11 @@ public class ChessModel implements IObservable, IChessModel {
 		return isValid;
 	}
 
+    /*
+     * Proof of concept method shown that colors are easy to change in the game.
+     *
+     * Will just switch between the two defined color themes.
+     */
 	@Override
 	public void changeColorTheme() {
 		chessTheme = chessTheme.getClass() == NormalTheme.class ? new FunnyTheme() : new NormalTheme();
@@ -397,6 +407,10 @@ public class ChessModel implements IObservable, IChessModel {
 
 	}
 
+    /*
+     * Handles the promotion of a pawn to another piece. Invoked by the controller after
+     * the user has selected what piece the pawn should be promoted to.
+     */
 	@Override
 	public void setPromotion(PieceType type, BoardPosition from, BoardPosition to) {
 		PieceColor color = board.getTurn();
