@@ -8,7 +8,6 @@ import io.oscr.androidchess.model.pieces.PieceType;
 import java.beans.PropertyChangeListener;
 
 public interface IChessModel {
-
 	public abstract void selectPosition(BoardPosition position);
 	
 	public abstract void addObserver(PropertyChangeListener observer);
@@ -26,5 +25,4 @@ public interface IChessModel {
 	public abstract void changeColorTheme();
 
 	public abstract void setPromotion(PieceType type, BoardPosition from, BoardPosition to);
-
 }

@@ -18,6 +18,10 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.Set;
 
+/**
+ * Represents the model in the MVC
+ *
+ */
 public class ChessModel implements IObservable, IChessModel {
 	private final PropertyChangeSupport observers = new PropertyChangeSupport(this);
 	private IChessBoard board;

@@ -9,15 +9,22 @@ import io.oscr.androidchess.model.pieces.PieceType;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+/**
+ * Implements the Chess Board abstraction.
+ */
 public class ChessBoard implements IChessBoard {
+    // Chess board abstraction. Where all pieces are placed.
 	private IChessPiece[][] board = new IChessPiece[8][8];
-	
+
+    // Needed for en passant
 	private BoardPosition enPassant = null;
 	private BoardPosition enPassantPawn = null;
-	
+
+    // Needed for castling.
 	private boolean whiteKingIsMoved = false;
 	private boolean blackKingIsMoved = false;
-	
+
+    // What players turn it is.
 	private PieceColor turn = PieceColor.WHITE;
 
     /**

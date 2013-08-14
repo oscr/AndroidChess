@@ -5,7 +5,8 @@ import io.oscr.androidchess.model.pieces.IChessPiece;
 import io.oscr.androidchess.model.pieces.PieceColor;
 
 /**
- *
+ * Specifies the behavior that is needed for the ChessBoard abstraction. It will keep the state
+ * of large parts of the Chess game.
  */
 public interface IChessBoard {
 
@@ -91,29 +92,35 @@ public interface IChessBoard {
     void setPromotion(ChessPiece chessPiece, BoardPosition position);
 
     /**
+     * Gives the BoardPosition that a pawn moves to when it captures by en passant. If no pawn
+     * can be captured by en passant will return null.
      *
-     *
-     * @return
+     * @return the BoardPosition that a pawn moves to in order to capture by en passant. If
+     * no capture possible null.
      */
 	BoardPosition getEnPassant();
 
     /**
+     * Gives the BoardPosition of the pawn that can be captured by en passant. Should no pawn
+     * be possible to capture by en passant it will return null.
      *
-     *
-     * @return
+     * @return the BoardPosition of the pawn that can be captured by en passant. If
+     * no capture possible null.
      */
     BoardPosition getEnPassantPawn();
 
     /**
+     * Sets the GameBoard values needed for en passant.
      *
-     *
-     * @param enPassant
-     * @param enPassantPawn
+     * @param enPassant the position that a pawn will move to in order to capture.
+     * @param enPassantPawn the pawn that will be captured by en passant.
      */
 	void setEnPassant(BoardPosition enPassant, BoardPosition enPassantPawn);
 
     /**
+     * Clears the en passant state that is set by setEnPassant
      *
+     * @see IChessBoard#setEnPassant(BoardPosition, BoardPosition)
      */
     void removeEnPassantPawn();
 }
