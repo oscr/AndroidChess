@@ -102,22 +102,33 @@ public class ChessModel implements IObservable, IChessModel {
 	}
 
 	/*
-	 * WARNING. This method creates a lot of side effects. 
-	 * TODO En passant. There may be better way.
+	 * Analyzes the game state and sets the game into a state that allows for en passant
+	 * in the next move.
 	 */
 	public void applyPawnLogic(BoardPosition to) {
-		// Pawn movement allows for en passant
+		// Only a moved pawn may allow for en passant.
 		IChessPiece fromPiece = board.getChessPiece(fromPosition); 
 		if(fromPiece.getPieceType() == PieceType.PAWN){
 			final int HOME_ROW = Constants.getHomeRow(fromPiece);
 			final int MOVE_DELTA = Constants.getMoveDelta(fromPiece);
 
+            /* In order for en passant to be possible there are a number of criterias that need
+             * to be met. The moving pawn must be 1) unmoved prior to this moved and 2) make a
+             * two square move.
+             *
+             * Following code checks for the above mentioned criterias and sets the gameboard into
+             * en passant state if it holds.
+             */
             // Checks if an passant is possible and sets an passant state in gameboard
 			if(fromPosition.getRank() == HOME_ROW && Math.abs((fromPosition.getRank() - to.getRank())) > 1 ){
 				board.setEnPassant(new BoardPosition(to.getFile(), to.getRank() - MOVE_DELTA), to);
 				// ATTENTION!
 				return;
-				
+
+            /*
+             * If the move that is made is an en passant capture we want to remove the pawn that set
+             * the game into en passant state.
+             */
 			} else if(to.equals(board.getEnPassant())){
 				BoardPosition bp = board.getEnPassantPawn();
                 board.removeEnPassantPawn();
@@ -126,8 +137,7 @@ public class ChessModel implements IObservable, IChessModel {
 		
 		}
 		
-		// For all moves except two square pawn move ->
-		// remove the en passant.
+		// For all moves except two square pawn move we want to remove the en passant state.
 		board.setEnPassant(null, null);
 
 	}
@@ -363,7 +373,6 @@ public class ChessModel implements IObservable, IChessModel {
 	 * doesn't move a piece that places the own king in check.
 	 */
 	private boolean isValidPosition(BoardPosition from, BoardPosition to) {
-
         ChessBoard backupBoard = null;
 
         // Important to check for null and it's the same class before
