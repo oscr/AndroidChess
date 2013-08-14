@@ -35,16 +35,25 @@ public class ChessModel implements IChessModel {
 		board = new ChessBoard();
 	}
 
+    /**
+     * {@inheritDoc}
+     */
 	@Override
 	public void addObserver(final PropertyChangeListener observer) {
 		observers.addPropertyChangeListener(observer);
 	}
 
+    /**
+     * {@inheritDoc}
+     */
 	@Override
 	public void removeObserver(final PropertyChangeListener observer) {
 		observers.removePropertyChangeListener(observer);
 	}
 
+    /**
+     * {@inheritDoc}
+     */
 	@Override
 	public void selectPosition(BoardPosition position) {
 		if (playing == board.getTurn()) {
@@ -55,7 +64,6 @@ public class ChessModel implements IChessModel {
 					fromPosition = position;
                     observers.firePropertyChange(null, false, new RedrawEvent(new BoardPosition[]{fromPosition}));
 				}
-
 			} else {
 				if (position.equals(fromPosition)) {
 					fromPosition = null;
@@ -82,8 +90,7 @@ public class ChessModel implements IChessModel {
 								}
 
 							} else {
-								// WARNING: This method has side effects. May
-								// change game state!
+								// WARNING: This method has side effects. May change game state!
 								applyPawnLogic(position);
 
 								move(fromPosition, position, null);
@@ -92,11 +99,9 @@ public class ChessModel implements IChessModel {
 
                                 // This has to be done because if the fromPosition isn't null then it will be marked as selected
                                 // when redrawing the
-                                //
                                 BoardPosition bp = fromPosition;
                                 fromPosition = null;
                                 observers.firePropertyChange(null, false, new RedrawEvent(new BoardPosition[]{bp, position}));
-
 							}
 						}
 					}
@@ -105,139 +110,9 @@ public class ChessModel implements IChessModel {
 		}
 	}
 
-	/*
-	 * Analyzes the game state and sets the game into a state that allows for en passant
-	 * in the next move.
-	 */
-	public void applyPawnLogic(BoardPosition to) {
-		// Only a moved pawn may allow for en passant.
-		IChessPiece fromPiece = board.getChessPiece(fromPosition); 
-		if(fromPiece.getPieceType() == PieceType.PAWN){
-			final int HOME_ROW = Constants.getHomeRow(fromPiece);
-			final int MOVE_DELTA = Constants.getMoveDelta(fromPiece);
-
-            /* In order for en passant to be possible there are a number of criterias that need
-             * to be met. The moving pawn must be 1) unmoved prior to this moved and 2) make a
-             * two square move.
-             *
-             * Following code checks for the above mentioned criterias and sets the gameboard into
-             * en passant state if it holds.
-             */
-            // Checks if an passant is possible and sets an passant state in gameboard
-			if(fromPosition.getRank() == HOME_ROW && Math.abs((fromPosition.getRank() - to.getRank())) > 1 ){
-				board.setEnPassant(new BoardPosition(to.getFile(), to.getRank() - MOVE_DELTA), to);
-				// ATTENTION!
-				return;
-
-            /*
-             * If the move that is made is an en passant capture we want to remove the pawn that set
-             * the game into en passant state.
-             */
-			} else if(to.equals(board.getEnPassant())){
-				BoardPosition bp = board.getEnPassantPawn();
-                board.removeEnPassantPawn();
-                observers.firePropertyChange(null, false, new RedrawEvent(new BoardPosition[]{bp}));
-			}
-		
-		}
-		
-		// For all moves except two square pawn move we want to remove the en passant state.
-		board.setEnPassant(null, null);
-
-	}
-
-	private Move isLegalCastlingMove(BoardPosition from, BoardPosition to) {
-		if (from.equals(Constants.WHITE_KING_START)) {
-			if (to.equals(Constants.W_KINGSIDE_KING)
-					&& isLegalCastle(Constants.WHITE_KING_START, Constants.W_KINGSIDE_ROOK_START, 0)) {
-				return new Move(Constants.W_KINGSIDE_ROOK_START, Constants.W_KINGSIDE_ROOK_END);
-
-			} else if (to.equals(Constants.W_QUEENSIDE_KING)
-					&& isLegalCastle(Constants.WHITE_KING_START, Constants.W_QUEENSIDE_ROOK_START, 1)) {
-				return new Move(Constants.W_QUEENSIDE_ROOK_START, Constants.W_QUEENSIDE_ROOK_END);
-			}
-
-		} else if (from.equals(Constants.BLACK_KING_START)) {
-			if (to.equals(Constants.B_KINGSIDE_KING)
-					&& isLegalCastle(Constants.BLACK_KING_START, Constants.B_KINGSIDE_ROOK_START, 0)) {
-				return new Move(Constants.B_KINGSIDE_ROOK_START, Constants.B_KINGSIDE_ROOK_END);
-
-			} else if (to.equals(Constants.B_QUEENSIDE_KING)
-					&& isLegalCastle(Constants.BLACK_KING_START, Constants.B_QUEENSIDE_ROOK_START, 1)) {
-				return new Move(Constants.B_QUEENSIDE_ROOK_START, Constants.B_QUEENSIDE_ROOK_END);
-			}
-		}
-		return null;
-
-	}
-
-	/*
-	 * Ensure that no square between the King and Rook can be reached by opposing side. 
-	 * If an opposing piece can reach an square between it's not a legal castle.
-	 * Also the King may not castle out of check.
-	 */
-	private boolean isLegalCastle(BoardPosition from, BoardPosition to, int delta) {
-		int start = Math.min(from.getFile(), to.getFile());
-		int end = Math.max(from.getFile(), to.getFile());
-
-		if (delta != 0) {
-			start++;
-			end++;
-		}
-
-		for (; start < end; start++) {
-			BoardPosition position = new BoardPosition(start, from.getRank());
-			for (int file = 0; file <= Constants.BOARD_MAX_POSITION; file++) {
-				for (int rank = 0; rank <= Constants.BOARD_MAX_POSITION; rank++) {
-					IChessPiece piece = board.getChessPiece(file, rank);
-					if (piece != null && piece.getPieceColor() != board.getTurn()) {
-						if (MovementRules.getLegalMoves(new BoardPosition(file, rank), board).contains(position)) {
-							return false;
-						}
-					}
-				}
-			}
-		}
-
-		return true;
-	}
-
-	private boolean isCastlingMove(BoardPosition from, BoardPosition to) {
-		if (from.equals(Constants.WHITE_KING_START)) {
-			if (to.equals(Constants.W_KINGSIDE_KING)) {
-				return true;
-
-			} else if (to.equals(Constants.W_QUEENSIDE_KING)) {
-				return true;
-			}
-		} else if (from.equals(Constants.BLACK_KING_START)) {
-			if (to.equals(Constants.B_KINGSIDE_KING)) {
-				return true;
-
-			} else if (to.equals(Constants.B_QUEENSIDE_KING)) {
-				return true;
-
-			}
-
-		}
-		return false;
-
-	}
-
-	private boolean isPawnPromotion(BoardPosition from, BoardPosition to) {
-		if(board == null)
-            throw new IllegalStateException("BOARD IS NULL!!");
-
-        IChessPiece piece = board.getChessPiece(from);
-		if (piece.getPieceType() == PieceType.PAWN) {
-			if (to.getRank() == Constants.WHITE_PAWN_LAST_RANK || to.getRank() == Constants.BLACK_PAWN_LAST_RANK) {
-				return true;
-
-			}
-		}
-		return false;
-	}
-
+    /**
+     * {@inheritDoc}
+     */
 	@Override
 	public ColorDrawable getBoardColor(BoardPosition boardPosition) {
 		int file = boardPosition.getFile();
@@ -263,6 +138,9 @@ public class ChessModel implements IChessModel {
 		}
 	}
 
+    /**
+     * {@inheritDoc}
+     */
 	@Override
 	public String getPieceString(BoardPosition position) {
 		IChessPiece piece = board.getChessPiece(position);
@@ -272,16 +150,41 @@ public class ChessModel implements IChessModel {
 		return chessTheme.getPieceString(piece);
 	}
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setPromotion(final PieceType type, final BoardPosition from, final BoardPosition to) {
+        PieceColor color = board.getTurn();
+        move(from, to, null);
+        board.setPromotion(new ChessPiece(color, type), to);
+        fromPosition = null;
+        observers.firePropertyChange(null, false, new RedrawEvent(new BoardPosition[]{from, to}));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
 	@Override
 	public void newGame(PieceColor white) {
 		board = new ChessBoard();
 		fromPosition = null;
 		playing = PieceColor.WHITE;
-
 		observers.firePropertyChange("", false, new RedrawAllEvent());
-
 	}
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void changeColorTheme() {
+        chessTheme = chessTheme.getClass() == NormalTheme.class ? new FunnyTheme() : new NormalTheme();
+        observers.firePropertyChange("", false, new RedrawAllEvent());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
 	@Override
 	public String getDisplayInformation() {
 		String information = "" + board.getTurn();
@@ -293,12 +196,11 @@ public class ChessModel implements IChessModel {
 		} else {
 			return "Turn: " + information;
 		}
-
 	}
 
 	/**
 	 * Will check if the current player defined by turn is in check.
-	 * 
+	 *
 	 * @return true if in check, otherwise false.
 	 */
 	private boolean isCheck() {
@@ -319,7 +221,6 @@ public class ChessModel implements IChessModel {
 		 */
 		if (kingPosition == null) {
 			throw new IllegalStateException("Could not find the " + board.getTurn() + " KING!!!");
-
 		}
 
         /*
@@ -352,7 +253,6 @@ public class ChessModel implements IChessModel {
 								return false;
 							}
 						}
-
 					}
 				}
 			}
@@ -363,25 +263,61 @@ public class ChessModel implements IChessModel {
 
 	private boolean isSelected(BoardPosition boardPosition) {
 		return boardPosition.equals(fromPosition);
-
 	}
 
-	private void move(final BoardPosition from, final BoardPosition to, final Move rookMove) {
+    private void move(final BoardPosition from, final BoardPosition to, final Move rookMove) {
         if(rookMove != null)
             board.move(rookMove.from, rookMove.to);
 
         board.move(from, to);
-		board.switchTurn();
-		playing = PieceColor.switchTurn(playing);
-	}
+        board.switchTurn();
+        playing = PieceColor.switchTurn(playing);
+    }
 
-	/*
-	 * Used to see if a position is valid. In other words that the player
-	 * doesn't move a piece that places the own king in check.
-	 */
-	private boolean isValidPosition(final BoardPosition from, final BoardPosition to) {
+    /*
+     * Analyzes the game state and sets the game into a state that allows for en passant
+     * in the next move.
+     */
+    private void applyPawnLogic(BoardPosition to) {
+        // Only a moved pawn may allow for en passant.
+        IChessPiece fromPiece = board.getChessPiece(fromPosition);
+        if(fromPiece.getPieceType() == PieceType.PAWN){
+            final int HOME_ROW = Constants.getHomeRow(fromPiece);
+            final int MOVE_DELTA = Constants.getMoveDelta(fromPiece);
+
+            /* In order for en passant to be possible there are a number of criterias that need
+             * to be met. The moving pawn must be 1) unmoved prior to this moved and 2) make a
+             * two square move.
+             *
+             * Following code checks for the above mentioned criterias and sets the gameboard into
+             * en passant state if it holds.
+             */
+            // Checks if an passant is possible and sets an passant state in gameboard
+            if(fromPosition.getRank() == HOME_ROW && Math.abs((fromPosition.getRank() - to.getRank())) > 1 ){
+                board.setEnPassant(new BoardPosition(to.getFile(), to.getRank() - MOVE_DELTA), to);
+                // ATTENTION!
+                return;
+
+            /*
+             * If the move that is made is an en passant capture we want to remove the pawn that set
+             * the game into en passant state.
+             */
+            } else if(to.equals(board.getEnPassant())){
+                BoardPosition bp = board.getEnPassantPawn();
+                board.removeEnPassantPawn();
+                observers.firePropertyChange(null, false, new RedrawEvent(new BoardPosition[]{bp}));
+            }
+        }
+        // For all moves except two square pawn move we want to remove the en passant state.
+        board.setEnPassant(null, null);
+    }
+
+    /*
+     * Used to see if a position is valid. In other words that the player
+     * doesn't move a piece that places the own king in check.
+     */
+    private boolean isValidPosition(final BoardPosition from, final BoardPosition to) {
         final ChessBoard backupBoard;
-
         // Important to check for null and it's the same class before
         // making a cast.
         if(board != null && board.getClass() == ChessBoard.class){
@@ -389,36 +325,98 @@ public class ChessModel implements IChessModel {
         } else {
             throw new IllegalStateException("Board in unacceptable state (null or not ChessBoard class");
         }
+        board.move(from, to);
+        boolean isValid = !isCheck();
+        board = backupBoard;
 
-		board.move(from, to);
-		boolean isValid = !isCheck();
-		board = backupBoard;
+        return isValid;
+    }
 
-		return isValid;
-	}
+    private Move isLegalCastlingMove(BoardPosition from, BoardPosition to) {
+        if (from.equals(Constants.WHITE_KING_START)) {
+            if (to.equals(Constants.W_KINGSIDE_KING)
+                    && isLegalCastle(Constants.WHITE_KING_START, Constants.W_KINGSIDE_ROOK_START, 0)) {
+                return new Move(Constants.W_KINGSIDE_ROOK_START, Constants.W_KINGSIDE_ROOK_END);
+
+            } else if (to.equals(Constants.W_QUEENSIDE_KING)
+                    && isLegalCastle(Constants.WHITE_KING_START, Constants.W_QUEENSIDE_ROOK_START, 1)) {
+                return new Move(Constants.W_QUEENSIDE_ROOK_START, Constants.W_QUEENSIDE_ROOK_END);
+            }
+
+        } else if (from.equals(Constants.BLACK_KING_START)) {
+            if (to.equals(Constants.B_KINGSIDE_KING)
+                    && isLegalCastle(Constants.BLACK_KING_START, Constants.B_KINGSIDE_ROOK_START, 0)) {
+                return new Move(Constants.B_KINGSIDE_ROOK_START, Constants.B_KINGSIDE_ROOK_END);
+
+            } else if (to.equals(Constants.B_QUEENSIDE_KING)
+                    && isLegalCastle(Constants.BLACK_KING_START, Constants.B_QUEENSIDE_ROOK_START, 1)) {
+                return new Move(Constants.B_QUEENSIDE_ROOK_START, Constants.B_QUEENSIDE_ROOK_END);
+            }
+        }
+        return null;
+    }
 
     /*
-     * Proof of concept method shown that colors are easy to change in the game.
-     *
-     * Will just switch between the two defined color themes.
+     * Ensure that no square between the King and Rook can be reached by opposing side.
+     * If an opposing piece can reach an square between it's not a legal castle.
+     * Also the King may not castle out of check.
      */
-	@Override
-	public void changeColorTheme() {
-		chessTheme = chessTheme.getClass() == NormalTheme.class ? new FunnyTheme() : new NormalTheme();
-		observers.firePropertyChange("", false, new RedrawAllEvent());
+    private boolean isLegalCastle(BoardPosition from, BoardPosition to, int delta) {
+        int start = Math.min(from.getFile(), to.getFile());
+        int end = Math.max(from.getFile(), to.getFile());
 
-	}
+        if (delta != 0) {
+            start++;
+            end++;
+        }
 
-    /*
-     * Handles the promotion of a pawn to another piece. Invoked by the controller after
-     * the user has selected what piece the pawn should be promoted to.
-     */
-	@Override
-	public void setPromotion(final PieceType type, final BoardPosition from, final BoardPosition to) {
-		PieceColor color = board.getTurn();
-		move(from, to, null);
-		board.setPromotion(new ChessPiece(color, type), to);
-        fromPosition = null;
-        observers.firePropertyChange(null, false, new RedrawEvent(new BoardPosition[]{from, to}));
-	}
+        for (; start < end; start++) {
+            BoardPosition position = new BoardPosition(start, from.getRank());
+            for (int file = 0; file <= Constants.BOARD_MAX_POSITION; file++) {
+                for (int rank = 0; rank <= Constants.BOARD_MAX_POSITION; rank++) {
+                    IChessPiece piece = board.getChessPiece(file, rank);
+                    if (piece != null && piece.getPieceColor() != board.getTurn()) {
+                        if (MovementRules.getLegalMoves(new BoardPosition(file, rank), board).contains(position)) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    private boolean isCastlingMove(BoardPosition from, BoardPosition to) {
+        if (from.equals(Constants.WHITE_KING_START)) {
+            if (to.equals(Constants.W_KINGSIDE_KING)) {
+                return true;
+
+            } else if (to.equals(Constants.W_QUEENSIDE_KING)) {
+                return true;
+            }
+        } else if (from.equals(Constants.BLACK_KING_START)) {
+            if (to.equals(Constants.B_KINGSIDE_KING)) {
+                return true;
+
+            } else if (to.equals(Constants.B_QUEENSIDE_KING)) {
+                return true;
+            }
+
+        }
+        return false;
+
+    }
+
+    private boolean isPawnPromotion(BoardPosition from, BoardPosition to) {
+        if(board == null)
+            throw new IllegalStateException("BOARD IS NULL!!");
+
+        IChessPiece piece = board.getChessPiece(from);
+        if (piece.getPieceType() == PieceType.PAWN) {
+            if (to.getRank() == Constants.WHITE_PAWN_LAST_RANK || to.getRank() == Constants.BLACK_PAWN_LAST_RANK) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

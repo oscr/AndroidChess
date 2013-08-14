@@ -268,9 +268,11 @@ public enum MovementRules {
      */
 	private static Set<BoardPosition> getLegalPawnMoves(final BoardPosition from, final IChessBoard board) {
 		final Set<BoardPosition> lm = new HashSet<BoardPosition>();
-        final IChessPiece PIECE = board.getChessPiece(from);
-        final int HOME_ROW = Constants.getHomeRow(PIECE);
-        final int MOVE_DELTA = Constants.getMoveDelta(PIECE);
+
+        final PieceColor color = board.getChessPiece(from).getPieceColor();
+        final int HOME_ROW = Constants.getHomeRow(color);
+        final int MOVE_DELTA = Constants.getMoveDelta(color);
+
         final int FILE = from.getFile();
         final int RANK = from.getRank();
 
@@ -305,7 +307,7 @@ public enum MovementRules {
 		// Check for capture left
 		if (FILE > 0) {
 			IChessPiece left = board.getChessPiece(FILE - 1, RANK + MOVE_DELTA);
-			if (left != null && left.getPieceColor() != PIECE.getPieceColor()) {
+			if (left != null && left.getPieceColor() != color) {
 				lm.add(new BoardPosition(FILE - 1, RANK + MOVE_DELTA));
 			}
 		}
@@ -313,7 +315,7 @@ public enum MovementRules {
 		// Check for capture right
 		if (FILE < 7) {
 			IChessPiece right = board.getChessPiece(FILE + 1, RANK + MOVE_DELTA);
-			if (right != null && right.getPieceColor() != PIECE.getPieceColor()) {
+			if (right != null && right.getPieceColor() != color) {
 				lm.add(new BoardPosition(FILE + 1, RANK + MOVE_DELTA));
 			}
 		}

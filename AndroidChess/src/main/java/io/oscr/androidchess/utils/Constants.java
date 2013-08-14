@@ -7,8 +7,6 @@ import io.oscr.androidchess.model.pieces.PieceColor;
 import java.io.File;
 
 /**
- * TODO
- *
  * Contains all constants used by the application.
  */
 public enum Constants {
@@ -23,14 +21,19 @@ public enum Constants {
 
     public static final int BOARD_SIZE = 8;
 
+    // Defines home row for pawns
 	public static final int WHITE_HOME_ROW = 1;
 	public static final int BLACK_HOME_ROW = 6;
-	
+
+    // Move delta for pawns
 	public static final int WHITE_PAWN_MOVE_DELTA = 1;
 	public static final int BLACK_PAWN_MOVE_DELTA = -1;
-	
+
+    // Move delta for Rooks
 	public static final int[][] ROOK_MOVE_DELTA = {{-1, 0},{1, 0},{0, -1},{0, 1}};
-	public static final int[][] BISHOP_MOVE_DELTA = {{-1, 1},{1, -1},{1, 1},{-1, -1}};
+
+    // Move delta for Bishops
+    public static final int[][] BISHOP_MOVE_DELTA = {{-1, 1},{1, -1},{1, 1},{-1, -1}};
 	
 	// Needed for Pawn promotion
 	public static final int WHITE_PAWN_LAST_RANK = 7;
@@ -70,28 +73,26 @@ public enum Constants {
     public static final BoardPosition W_QUEENSIDE_ROOK_START = new BoardPosition("A1");
 
     /**
-     * TODO
+     * Returns the home row for a pawn. This is needed when determining if the pawn has moved before
+     * and hence can move two steps forward.
      *
-     * Used to get the home row for a pawn. This allows easy detection if the pawn has moved
-     * or not.
-     *
-     * @param piece The pic
+     * @param color What sides home row is wanted.
      * @return the rank zero index which is the home row
      */
-	public static int getHomeRow(IChessPiece piece) {
-		return piece.getPieceColor() == PieceColor.WHITE 
+	public static int getHomeRow(PieceColor color) {
+		return color == PieceColor.WHITE
 				? Constants.WHITE_HOME_ROW
 				: Constants.BLACK_HOME_ROW;
 	}
 
     /**
-     * TODO
+     * Returns the movement delta for pawns for the specified color.
      *
-     * @param piece
-     * @return
+     * @param color What sides delta is wanted.
+     * @return the pawn movement delta.
      */
-	public static int getMoveDelta(IChessPiece piece) {
-		return piece.getPieceColor() == PieceColor.WHITE 
+	public static int getMoveDelta(PieceColor color) {
+		return color == PieceColor.WHITE
 				? Constants.WHITE_PAWN_MOVE_DELTA
 				: Constants.BLACK_PAWN_MOVE_DELTA;
 	}
