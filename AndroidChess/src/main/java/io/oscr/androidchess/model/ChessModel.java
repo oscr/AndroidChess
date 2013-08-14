@@ -221,7 +221,10 @@ public class ChessModel implements IObservable, IChessModel {
 	}
 
 	private boolean isPawnPromotion(BoardPosition from, BoardPosition to) {
-		IChessPiece piece = board.getChessPiece(from);
+		if(board == null)
+            throw new IllegalStateException("BOARD IS NULL!!");
+
+        IChessPiece piece = board.getChessPiece(from);
 		if (piece.getPieceType() == PieceType.PAWN) {
 			if (to.getRank() == Constants.WHITE_PAWN_LAST_RANK || to.getRank() == Constants.BLACK_PAWN_LAST_RANK) {
 				return true;
@@ -378,12 +381,12 @@ public class ChessModel implements IObservable, IChessModel {
 	 * doesn't move a piece that places the own king in check.
 	 */
 	private boolean isValidPosition(BoardPosition from, BoardPosition to) {
-        ChessBoard backupBoard = null;
+        ChessBoard backupBoard;
 
         // Important to check for null and it's the same class before
         // making a cast.
         if(board != null && board.getClass() == ChessBoard.class){
-            new ChessBoard((ChessBoard)board);
+            backupBoard = new ChessBoard((ChessBoard)board);
         } else {
             throw new IllegalStateException("Board in unacceptable state (null or not ChessBoard class");
         }

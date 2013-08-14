@@ -8,8 +8,8 @@ import io.oscr.androidchess.model.pieces.IChessPiece;
 import io.oscr.androidchess.model.pieces.PieceType;
 import io.oscr.androidchess.utils.Constants;
 
-//import static com.google.common.base.Preconditions.checkNotNull;
-//import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkArgument;
 
 public class ChessBoard implements IChessBoard {
 	private IChessPiece[][] board = new IChessPiece[8][8];
@@ -66,19 +66,10 @@ public class ChessBoard implements IChessBoard {
 	
 	@Override
 	public boolean isEmpty(int file, int rank){
-
-        // Because Google Guava crashes the emulator
-        if(file < Constants.BOARD_MIN_POSITION || rank < Constants.BOARD_MIN_POSITION)
-            throw new IllegalArgumentException();
-
-        // Because Google Guava crashes the emulator
-        if(file > Constants.BOARD_MAX_POSITION || rank > Constants.BOARD_MAX_POSITION)
-            throw new IllegalArgumentException();
-
-		//checkArgument(file >= Constants.BOARD_MIN_POSITION, "Argument file is smaller that specified: %s", file);
-		//checkArgument(file <= Constants.BOARD_MAX_POSITION, "Argument file is larger that specified: %s", file);
-		//checkArgument(rank >= Constants.BOARD_MIN_POSITION, "Argument rank is smaller that specified: %s", rank);
-		//checkArgument(rank <= Constants.BOARD_MAX_POSITION, "Argument rank is larger that specified: %s", rank);
+		checkArgument(file >= Constants.BOARD_MIN_POSITION, "Argument file is smaller that specified: %s", file);
+		checkArgument(file <= Constants.BOARD_MAX_POSITION, "Argument file is larger that specified: %s", file);
+		checkArgument(rank >= Constants.BOARD_MIN_POSITION, "Argument rank is smaller that specified: %s", rank);
+		checkArgument(rank <= Constants.BOARD_MAX_POSITION, "Argument rank is larger that specified: %s", rank);
 						
 		return board[file][rank] == null;
 	}
@@ -107,12 +98,8 @@ public class ChessBoard implements IChessBoard {
 	
  	@Override
 	public void move(BoardPosition from, BoardPosition to){
-
-        if(from == null || to == null)
-            throw new NullPointerException();
-
- 		//checkNotNull(from, "Argument from was null. Expected non null");
- 		//checkNotNull(to, "Argument to was null. Expected non null");
+ 		checkNotNull(from, "Argument from was null. Expected non null");
+ 		checkNotNull(to, "Argument to was null. Expected non null");
  		
  		// Move the piece from square
  		IChessPiece piece = board[from.getFile()][from.getRank()];
@@ -122,8 +109,6 @@ public class ChessBoard implements IChessBoard {
  		
  		// Place the piece on it's new position
  		board[to.getFile()][to.getRank()] = piece;
- 		
- 		
  	}
  	
  	@Override
@@ -144,30 +129,22 @@ public class ChessBoard implements IChessBoard {
  	}
  	
  	private void moveRookCastle(BoardPosition p1, BoardPosition p2){
-			board[p2.getFile()][p2.getRank()] = board[p1.getFile()][p1.getRank()];
-			board[p1.getFile()][p1.getRank()] = null;
+		board[p2.getFile()][p2.getRank()] = board[p1.getFile()][p1.getRank()];
+		board[p1.getFile()][p1.getRank()] = null;
  	}
 	
 	@Override
 	public IChessPiece getChessPiece(BoardPosition position) {
-		//checkNotNull(position, "Argument was null. Expected non null");
+		checkNotNull(position, "Argument was null. Expected non null");
 		return getChessPiece(position.getFile(), position.getRank());
 	}
 
 	@Override
 	public IChessPiece getChessPiece(int file, int rank) {
-		//checkArgument(file >= Constants.BOARD_MIN_POSITION, "Argument file is smaller that specified: %s", file);
-		//checkArgument(file <= Constants.BOARD_MAX_POSITION, "Argument file is larger that specified: %s", file);
-		//checkArgument(rank >= Constants.BOARD_MIN_POSITION, "Argument rank is smaller that specified: %s", file);
-		//checkArgument(rank <= Constants.BOARD_MAX_POSITION, "Argument rank is larger that specified: %s", file);
-
-        // Because Google Guava crashes the emulator
-        if(file < Constants.BOARD_MIN_POSITION || rank < Constants.BOARD_MIN_POSITION)
-            throw new IllegalArgumentException();
-
-        // Because Google Guava crashes the emulator
-        if(file > Constants.BOARD_MAX_POSITION || rank > Constants.BOARD_MAX_POSITION)
-            throw new IllegalArgumentException();
+		checkArgument(file >= Constants.BOARD_MIN_POSITION, "Argument file is smaller that specified: %s", file);
+		checkArgument(file <= Constants.BOARD_MAX_POSITION, "Argument file is larger that specified: %s", file);
+		checkArgument(rank >= Constants.BOARD_MIN_POSITION, "Argument rank is smaller that specified: %s", file);
+		checkArgument(rank <= Constants.BOARD_MAX_POSITION, "Argument rank is larger that specified: %s", file);
 
 		return board[file][rank];
 	}
