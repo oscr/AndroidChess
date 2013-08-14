@@ -6,10 +6,8 @@ import io.oscr.androidchess.model.pieces.PieceColor;
 import io.oscr.androidchess.model.pieces.ChessPiece;
 import io.oscr.androidchess.model.pieces.IChessPiece;
 import io.oscr.androidchess.model.pieces.PieceType;
-import io.oscr.androidchess.utils.Constants;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkArgument;
 
 public class ChessBoard implements IChessBoard {
 	private IChessPiece[][] board = new IChessPiece[8][8];
@@ -21,7 +19,10 @@ public class ChessBoard implements IChessBoard {
 	private boolean blackKingIsMoved = false;
 	
 	private PieceColor turn = PieceColor.WHITE;
-	
+
+    /**
+     * Creates a board in normal starting state.
+     */
 	public ChessBoard(){
 		board[0][0] = new ChessPiece(PieceColor.WHITE, PieceType.ROOK);
 		board[7][0] = new ChessPiece(PieceColor.WHITE, PieceType.ROOK);
@@ -46,11 +47,15 @@ public class ChessBoard implements IChessBoard {
 		for(int i = 0; i < board.length; i++){
 			board[i][6] = new ChessPiece(PieceColor.BLACK, PieceType.PAWN);
 		}
-		
 	}
-	
-	public ChessBoard(ChessBoard other){
-		// Copy primitive data types
+
+    /**
+     * Copy constructor. Will instantiate the object with the same state as the parameter argument.
+     *
+     * @param other ChessBoard to copy state of.
+     */
+	public ChessBoard(final ChessBoard other){
+		// Copy primitive data types and references
 		this.whiteKingIsMoved = other.whiteKingIsMoved;
 		this.blackKingIsMoved = other.blackKingIsMoved;
 		this.enPassant = other.enPassant;
@@ -61,22 +66,32 @@ public class ChessBoard implements IChessBoard {
 		for(int i = 0; i < board.length; i++){
 			board[i] = Arrays.copyOf(other.board[i], other.board.length);
 		}
-		
 	}
-	
+
+    /**
+     * {@inheritDoc}
+     * @throws IllegalArgumentException if file or rank is outside board limits.
+     */
 	@Override
-	public boolean isEmpty(int file, int rank){
-		checkArgument(file >= Constants.BOARD_MIN_POSITION, "Argument file is smaller that specified: %s", file);
-		checkArgument(file <= Constants.BOARD_MAX_POSITION, "Argument file is larger that specified: %s", file);
-		checkArgument(rank >= Constants.BOARD_MIN_POSITION, "Argument rank is smaller that specified: %s", rank);
-		checkArgument(rank <= Constants.BOARD_MAX_POSITION, "Argument rank is larger that specified: %s", rank);
-						
-		return board[file][rank] == null;
+	public boolean isEmpty(final int file, final int rank){
+		return isEmpty(new BoardPosition(file, rank));
 	}
-	
-	
+
+    /**
+     * {@inheritDoc}
+     * @throws NullPointerException if position is null.
+     */
+    @Override
+    public boolean isEmpty(final BoardPosition position) {
+        checkNotNull(position, "Argument from was null. Expected non null");
+        return board[position.getFile()][position.getRank()] == null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
 	@Override
-	public void setKingMoved(BoardPosition position){
+	public void setKingMoved(final BoardPosition position){
 		IChessPiece piece = getChessPiece(position);
 		if(piece.getPieceType() == PieceType.KING){
 			if(piece.getPieceColor() == PieceColor.WHITE){
@@ -86,97 +101,113 @@ public class ChessBoard implements IChessBoard {
 			}
 		}
 	}
-	
+
+    /**
+     * {@inheritDoc}
+     */
 	@Override
-	public void move(final BoardPosition from, final BoardPosition to, final Move rookMove){
+	public void move(final BoardPosition from, final BoardPosition to){
         checkNotNull(from, "Argument from was null. Expected non null");
         checkNotNull(to, "Argument to was null. Expected non null");
-
-        if(rookMove != null){
-            moveRookCastle(rookMove.from, rookMove.to);
-        }
 
  		// Move the piece from square
  		IChessPiece piece = board[from.getFile()][from.getRank()];
  		board[from.getFile()][from.getRank()] = null;
- 		
+
  		// TODO Implement what pieces have been captured here
- 		
+
  		// Place the piece on it's new position
  		board[to.getFile()][to.getRank()] = piece;
  	}
- 	
+
+    /**
+     * {@inheritDoc}
+     */
  	@Override
  	public PieceColor getTurn(){
  		return turn;
  	}
- 	
+
  	/*
- 	 * The reason for a separate method to switch turn and not just have it in move() is 
- 	 * because right now it makes the isCheck method much more efficient. It can be used 
- 	 * to control that a user doesn't move a piece that places their own king in check 
- 	 * and it can be used to see if a move places the opponent king in check.  
+ 	 * The reason for a separate method to switch turn and not just have it in move() is
+ 	 * because right now it makes the isCheck method much more efficient. It can be used
+ 	 * to control that a user doesn't move a piece that places their own king in check
+ 	 * and it can be used to see if a move places the opponent king in check.
  	 */
- 	@Override 
+    /**
+     * {@inheritDoc}
+     */
+ 	@Override
  	public void switchTurn(){
  		turn = PieceColor.switchTurn(turn);
- 		
+
  	}
- 	
- 	private void moveRookCastle(BoardPosition p1, BoardPosition p2){
-		board[p2.getFile()][p2.getRank()] = board[p1.getFile()][p1.getRank()];
-		board[p1.getFile()][p1.getRank()] = null;
- 	}
-	
+
+    /**
+     * {@inheritDoc}
+     * @throws NullPointerException if position is null.
+     */
 	@Override
-	public IChessPiece getChessPiece(BoardPosition position) {
+	public IChessPiece getChessPiece(final BoardPosition position) {
 		checkNotNull(position, "Argument was null. Expected non null");
-		return getChessPiece(position.getFile(), position.getRank());
+		return board[position.getFile()][position.getRank()];
 	}
 
+    /**
+     * {@inheritDoc}
+     * @throws IllegalArgumentException if file or rank isn't within board limits.
+     */
 	@Override
-	public IChessPiece getChessPiece(int file, int rank) {
-		checkArgument(file >= Constants.BOARD_MIN_POSITION, "Argument file is smaller that specified: %s", file);
-		checkArgument(file <= Constants.BOARD_MAX_POSITION, "Argument file is larger that specified: %s", file);
-		checkArgument(rank >= Constants.BOARD_MIN_POSITION, "Argument rank is smaller that specified: %s", file);
-		checkArgument(rank <= Constants.BOARD_MAX_POSITION, "Argument rank is larger that specified: %s", file);
-
-		return board[file][rank];
+	public IChessPiece getChessPiece(final int file, final int rank) {
+		return getChessPiece(new BoardPosition(file, rank));
 	}
 
+    /**
+     * {@inheritDoc}
+     */
 	@Override
-	public boolean isKingMoved(PieceColor pieceColor) {
-		return pieceColor == PieceColor.WHITE 
+	public boolean isKingMoved(final PieceColor pieceColor) {
+		return pieceColor == PieceColor.WHITE
 				? whiteKingIsMoved
 				: blackKingIsMoved;
 	}
 
-	@Override
-	public boolean isEmpty(BoardPosition position) {
-		return isEmpty(position.getFile(), position.getRank());
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+	public void setPromotion(final ChessPiece chessPiece, final BoardPosition to) {
+		board[to.getFile()][to.getRank()] = chessPiece;
 	}
 
-	public void setPromotion(ChessPiece chessPiece, BoardPosition to) {
-		board[to.getFile()][to.getRank()] = chessPiece;
-		
-	}
-	
+    /**
+     * {@inheritDoc}
+     */
+    @Override
 	public void removeEnPassantPawn(){
 		board[enPassantPawn.getFile()][enPassantPawn.getRank()] = null;
 	}
 
+    /**
+     * {@inheritDoc}
+     */
 	@Override
-	public void setEnPassant(BoardPosition enPassant, BoardPosition enPassantPawn) {
+	public void setEnPassant(final BoardPosition enPassant, final BoardPosition enPassantPawn) {
 		this.enPassant = enPassant;
 		this.enPassantPawn = enPassantPawn;
-		
 	}
 
+    /**
+     * {@inheritDoc}
+     */
 	@Override
 	public BoardPosition getEnPassantPawn() {
 		return enPassantPawn;
 	}
-	
+
+    /**
+     * {@inheritDoc}
+     */
 	@Override
 	public BoardPosition getEnPassant(){
 		return enPassant;

@@ -363,7 +363,10 @@ public class ChessModel implements IObservable, IChessModel {
 	}
 
 	private void move(final BoardPosition from, final BoardPosition to, final Move rookMove) {
-		board.move(from, to, rookMove);
+        if(rookMove != null)
+            board.move(rookMove.from, rookMove.to);
+
+        board.move(from, to);
 		board.switchTurn();
 		playing = PieceColor.switchTurn(playing);
 	}
@@ -383,7 +386,7 @@ public class ChessModel implements IObservable, IChessModel {
             throw new IllegalStateException("Board in unacceptable state (null or not ChessBoard class");
         }
 
-		board.move(from, to, null);
+		board.move(from, to);
 		boolean isValid = !isCheck();
 		board = backupBoard;
 
