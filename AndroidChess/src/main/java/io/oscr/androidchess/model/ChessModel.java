@@ -19,10 +19,10 @@ import java.beans.PropertyChangeSupport;
 import java.util.Set;
 
 /**
- * Represents the model in the MVC
+ * Represents the model in the MVC model.
  *
  */
-public class ChessModel implements IObservable, IChessModel {
+public class ChessModel implements IChessModel {
 	private final PropertyChangeSupport observers = new PropertyChangeSupport(this);
 	private IChessBoard board;
 	private IChessTheme chessTheme = new NormalTheme();

@@ -7,13 +7,12 @@ import io.oscr.androidchess.model.pieces.PieceType;
 
 import java.beans.PropertyChangeListener;
 
-public interface IChessModel {
+/**
+ *
+ */
+public interface IChessModel extends IObservable {
 	public abstract void selectPosition(BoardPosition position);
 	
-	public abstract void addObserver(PropertyChangeListener observer);
-
-	public abstract void removeObserver(PropertyChangeListener observer);
-
 	public abstract ColorDrawable getBoardColor(BoardPosition boardPosition);
 
 	public abstract String getPieceString(BoardPosition boardPosition);
