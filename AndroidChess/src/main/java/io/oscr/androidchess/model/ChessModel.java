@@ -362,14 +362,14 @@ public class ChessModel implements IObservable, IChessModel {
 
 	}
 
-	private void move(BoardPosition from, BoardPosition to) {
+	private void move(final BoardPosition from, final BoardPosition to) {
 		board.move(from, to);
 		board.switchTurn();
 		playing = PieceColor.switchTurn(playing);
 
 	}
 
-	private void move(BoardPosition from, BoardPosition to, Move move) {
+	private void move(final BoardPosition from, final BoardPosition to, final Move move) {
 		board.move(from, to, move);
 		board.switchTurn();
 		playing = PieceColor.switchTurn(playing);
@@ -380,8 +380,8 @@ public class ChessModel implements IObservable, IChessModel {
 	 * Used to see if a position is valid. In other words that the player
 	 * doesn't move a piece that places the own king in check.
 	 */
-	private boolean isValidPosition(BoardPosition from, BoardPosition to) {
-        ChessBoard backupBoard;
+	private boolean isValidPosition(final BoardPosition from, final BoardPosition to) {
+        final ChessBoard backupBoard;
 
         // Important to check for null and it's the same class before
         // making a cast.
@@ -415,7 +415,7 @@ public class ChessModel implements IObservable, IChessModel {
      * the user has selected what piece the pawn should be promoted to.
      */
 	@Override
-	public void setPromotion(PieceType type, BoardPosition from, BoardPosition to) {
+	public void setPromotion(final PieceType type, final BoardPosition from, final BoardPosition to) {
 		PieceColor color = board.getTurn();
 		move(from, to);
 		board.setPromotion(new ChessPiece(color, type), to);
