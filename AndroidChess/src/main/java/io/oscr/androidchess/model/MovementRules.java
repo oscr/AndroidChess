@@ -63,72 +63,87 @@ public enum MovementRules {
 		}
 	}
 
+    /**
+     * Performs the task of calculating all legal moves for the King. The method checks if a castle
+     * is possible to perform and adds it if it is.
+     *
+     * @param from what position is the piece placed on.
+     * @param board the current GameBoard.
+     * @return a set of legal BoardPosition.
+     */
 	private static Set<BoardPosition> getLegalKingMoves(BoardPosition from, IChessBoard board) {
 		final Set<BoardPosition> lm = new HashSet<BoardPosition>();
 
-		final int KING_MOVE_SQUARE_START = -1;
-		final int KING_MOVE_SQUARE_END = 1;
-
-		// Will represent the box of moves the King can perform around itself.
-		// The center where the King is placed won't be added since the filter
-		// disallowing capture of pieces of the same color will detect that the
-		// King has the same color as itself :)
-		for (int i = KING_MOVE_SQUARE_START; i <= KING_MOVE_SQUARE_END; i++) {
-			for (int j = KING_MOVE_SQUARE_START; j <= KING_MOVE_SQUARE_END; j++) {
+        /*
+         * Represents the "box" of moves the King can perform around itself.
+         * The center (where the King is placed) isn't filtered but that isn't
+         * a problem since a piece can't capture any piece of the same color.
+         * Hence the King won't be able to capture himself :)
+         */
+        final int KING_MOVE_SQUARE_START = -1;
+        final int KING_MOVE_SQUARE_END = 1;
+        for (int i = KING_MOVE_SQUARE_START; i <= KING_MOVE_SQUARE_END; i++) {
+            for (int j = KING_MOVE_SQUARE_START; j <= KING_MOVE_SQUARE_END; j++) {
 				int file = from.getFile() + i;
 				int rank = from.getRank() + j;
-
 				addPositionIfValid(board, lm, from, file, rank);
 			}
 		}
 
-		final IChessPiece KING_PIECE = board.getChessPiece(from.getFile(), from.getRank());
-		final boolean KING_HAS_MOVED = board.isKingMoved(KING_PIECE.getPieceColor());
+        /*
+         * The following code performs the necessary checks to see if a castle move is legal
+         * and if so adds it to the set of legal moves. Important to note is that no check for
+         * intermediate capture is performed here. However all squares between the rook and the
+         * king are ensured to be empty.
+         */
+		final IChessPiece KING_PIECE = board.getChessPiece(from);
 
-		if (!KING_HAS_MOVED) {
+        // If the King has moved it can't castle
+        if (!board.isKingMoved(KING_PIECE.getPieceColor())) {
+            // In case King is white
 			if (KING_PIECE.getPieceColor() == PieceColor.WHITE) {
-				IChessPiece rookPiece = board.getChessPiece(Constants.W_KINGSIDE_ROOK_START);
-				if (rookPiece != null && rookPiece.getPieceColor() == board.getChessPiece(from).getPieceColor()
+
+                // Handles white castle king side.
+                IChessPiece rookPiece = board.getChessPiece(Constants.W_KINGSIDE_ROOK_START);
+				if (rookPiece != null && rookPiece.getPieceColor() == KING_PIECE.getPieceColor()
 						&& rookPiece.getPieceType() == PieceType.ROOK
 						&& board.isEmpty(Constants.W_KINGSIDE_SECOND_EMPTY)
 						&& board.isEmpty(Constants.W_KINGSIDE_FIRST_EMPTY)) {
-
 					lm.add(Constants.W_KINGSIDE_KING);
-
 				}
 
+                // Handles white castle queen side.
 				rookPiece = board.getChessPiece(Constants.W_QUEENSIDE_ROOK_START);
 				if (rookPiece != null && rookPiece.getPieceColor() == board.getChessPiece(from).getPieceColor()
 						&& rookPiece.getPieceType() == PieceType.ROOK
 						&& board.isEmpty(Constants.W_QUEENSIDE_FIRST_EMPTY)
 						&& board.isEmpty(Constants.W_QUEENSIDE_SECOND_EMPTY)
 						&& board.isEmpty(Constants.W_QUEENSIDE_THIRD_EMPTY)) {
-
 					lm.add(Constants.W_QUEENSIDE_KING);
 				}
 
+            // In case King is Black
 			} else {
+                // Handles black castle king side.
 				IChessPiece rookPiece = board.getChessPiece(Constants.B_KINGSIDE_ROOK_START);
 				if (rookPiece != null && rookPiece.getPieceColor() == board.getChessPiece(from).getPieceColor()
 						&& rookPiece.getPieceType() == PieceType.ROOK
 						&& board.isEmpty(Constants.B_KINGSIDE_FIRST_EMPTY)
 						&& board.isEmpty(Constants.B_KINGSIDE_SECOND_EMPTY)) {
-
 					lm.add(Constants.B_KINGSIDE_KING);
 				}
 
+                // Handles black castle queen side.
 				rookPiece = board.getChessPiece(Constants.B_QUEENSIDE_ROOK_START);
 				if (rookPiece != null && rookPiece.getPieceColor() == board.getChessPiece(from).getPieceColor()
 						&& rookPiece.getPieceType() == PieceType.ROOK
 						&& board.isEmpty(Constants.B_QUEENSIDE_FIRST_EMPTY)
 						&& board.isEmpty(Constants.B_QUEENSIDE_SECOND_EMPTY)
 						&& board.isEmpty(Constants.B_QUEENSIDE_THIRD_EMPTY)) {
-
 					lm.add(Constants.B_QUEENSIDE_KING);
 				}
 			}
 		}
-
 		return lm;
 	}
 
