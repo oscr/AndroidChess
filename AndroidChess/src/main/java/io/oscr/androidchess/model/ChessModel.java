@@ -20,8 +20,7 @@ import java.util.Set;
 
 public class ChessModel implements IObservable, IChessModel {
 	private final PropertyChangeSupport observers = new PropertyChangeSupport(this);
-	// TODO There is now an IChessBoard interface. Should migrate?
-	private ChessBoard board;
+	private IChessBoard board;
 	private IChessTheme chessTheme = new NormalTheme();
 
 	private BoardPosition fromPosition;
@@ -346,7 +345,6 @@ public class ChessModel implements IObservable, IChessModel {
 	}
 
 	private void move(BoardPosition from, BoardPosition to) {
-		// TODO En passant
 		board.move(from, to);
 		board.switchTurn();
 		playing = PieceColor.switchTurn(playing);
@@ -354,7 +352,6 @@ public class ChessModel implements IObservable, IChessModel {
 	}
 
 	private void move(BoardPosition from, BoardPosition to, Move move) {
-		// TODO En passant
 		board.move(from, to, move);
 		board.switchTurn();
 		playing = PieceColor.switchTurn(playing);
@@ -366,7 +363,17 @@ public class ChessModel implements IObservable, IChessModel {
 	 * doesn't move a piece that places the own king in check.
 	 */
 	private boolean isValidPosition(BoardPosition from, BoardPosition to) {
-		ChessBoard backupBoard = new ChessBoard(board);
+
+        ChessBoard backupBoard = null;
+
+        // Important to check for null and it's the same class before
+        // making a cast.
+        if(board != null && board.getClass() == ChessBoard.class){
+            new ChessBoard((ChessBoard)board);
+        } else {
+            throw new IllegalStateException("Board in unacceptable state (null or not ChessBoard class");
+        }
+
 		board.move(from, to);
 		boolean isValid = !isCheck();
 		board = backupBoard;

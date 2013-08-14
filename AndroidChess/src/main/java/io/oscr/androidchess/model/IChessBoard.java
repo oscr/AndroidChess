@@ -1,5 +1,6 @@
 package io.oscr.androidchess.model;
 
+import io.oscr.androidchess.model.pieces.ChessPiece;
 import io.oscr.androidchess.model.pieces.IChessPiece;
 import io.oscr.androidchess.model.pieces.PieceColor;
 
@@ -30,4 +31,7 @@ public interface IChessBoard {
 
 	BoardPosition getEnPassantPawn();
 
+    void removeEnPassantPawn();
+
+    void setPromotion(ChessPiece chessPiece, BoardPosition to);
 }

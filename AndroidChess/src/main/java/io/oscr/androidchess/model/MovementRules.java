@@ -17,7 +17,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public enum MovementRules {
 	;
 
-	public static Set<BoardPosition> getLegalMoves(BoardPosition from, ChessBoard board) {
+	public static Set<BoardPosition> getLegalMoves(BoardPosition from, IChessBoard board) {
 		checkNotNull(from, "Argument from was null. Expected not null");
 		checkNotNull(board, "Argument board was null. Expected not null");
 
