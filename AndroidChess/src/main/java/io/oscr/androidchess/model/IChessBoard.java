@@ -9,8 +9,6 @@ public interface IChessBoard {
 
 	void setKingMoved(BoardPosition position);
 
-	void move(BoardPosition from, BoardPosition to);
-
 	IChessPiece getChessPiece(BoardPosition position);
 
 	IChessPiece getChessPiece(int file, int rank);
@@ -25,6 +23,8 @@ public interface IChessBoard {
 
 	void move(BoardPosition from, BoardPosition to, Move rookMove);
 
+    void setPromotion(ChessPiece chessPiece, BoardPosition to);
+
 	BoardPosition getEnPassant();
 
 	void setEnPassant(BoardPosition enPassant, BoardPosition enPassantPawn);
@@ -32,6 +32,4 @@ public interface IChessBoard {
 	BoardPosition getEnPassantPawn();
 
     void removeEnPassantPawn();
-
-    void setPromotion(ChessPiece chessPiece, BoardPosition to);
 }

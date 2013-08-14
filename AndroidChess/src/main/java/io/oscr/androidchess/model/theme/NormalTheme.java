@@ -7,34 +7,56 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 
 /**
- * TODO
+ * A classic chess color theme.
  */
 public class NormalTheme implements IChessTheme {
-	private final ColorDrawable selectedColor = new ColorDrawable(Color.YELLOW);
+    /**
+     * Color for selected BoardPosition
+     */
+    private final ColorDrawable selectedColor = new ColorDrawable(Color.YELLOW);
+
+    /**
+     * Color for odd squares.
+     */
 	private final ColorDrawable oddColor = new ColorDrawable(Color.WHITE);
+
+    /**
+     * Color for even squares.
+     */
 	private final ColorDrawable evenColor = new ColorDrawable(Color.GRAY);
 
+    /**
+     * {@inheritDoc}
+     */
 	@Override
 	public ColorDrawable getSelectedSquare() {
 		return selectedColor;
 	}
 
+    /**
+     * {@inheritDoc}
+     */
 	@Override
 	public ColorDrawable getOddSquare() {
 		return oddColor;
 	}
 
+    /**
+     * {@inheritDoc}
+     */
 	@Override
 	public ColorDrawable getEvenSquare() {
 		return evenColor;
 	}
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getPieceString(IChessPiece chessPiece) {
         if(chessPiece == null){
             return null;
         }
-
         String colorPrefix = chessPiece.getPieceColor() == PieceColor.WHITE ? "w" : "b";
         String pieceSuffix = null;
 

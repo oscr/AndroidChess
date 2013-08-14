@@ -88,19 +88,14 @@ public class ChessBoard implements IChessBoard {
 	}
 	
 	@Override
-	public void move(BoardPosition from, BoardPosition to, Move rookMove){
-		if(rookMove != null){
-			moveRookCastle(rookMove.from, rookMove.to);
-			
-		}
-		move(from, to);
-	}
-	
- 	@Override
-	public void move(BoardPosition from, BoardPosition to){
- 		checkNotNull(from, "Argument from was null. Expected non null");
- 		checkNotNull(to, "Argument to was null. Expected non null");
- 		
+	public void move(final BoardPosition from, final BoardPosition to, final Move rookMove){
+        checkNotNull(from, "Argument from was null. Expected non null");
+        checkNotNull(to, "Argument to was null. Expected non null");
+
+        if(rookMove != null){
+            moveRookCastle(rookMove.from, rookMove.to);
+        }
+
  		// Move the piece from square
  		IChessPiece piece = board[from.getFile()][from.getRank()];
  		board[from.getFile()][from.getRank()] = null;

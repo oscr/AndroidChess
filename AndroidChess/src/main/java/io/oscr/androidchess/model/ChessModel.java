@@ -82,7 +82,7 @@ public class ChessModel implements IObservable, IChessModel {
 								// change game state!
 								applyPawnLogic(position);
 
-								move(fromPosition, position);
+								move(fromPosition, position, null);
 								// Will mark the King as moved if it's moved
 								board.setKingMoved(position);
 
@@ -362,18 +362,10 @@ public class ChessModel implements IObservable, IChessModel {
 
 	}
 
-	private void move(final BoardPosition from, final BoardPosition to) {
-		board.move(from, to);
+	private void move(final BoardPosition from, final BoardPosition to, final Move rookMove) {
+		board.move(from, to, rookMove);
 		board.switchTurn();
 		playing = PieceColor.switchTurn(playing);
-
-	}
-
-	private void move(final BoardPosition from, final BoardPosition to, final Move move) {
-		board.move(from, to, move);
-		board.switchTurn();
-		playing = PieceColor.switchTurn(playing);
-
 	}
 
 	/*
@@ -417,7 +409,7 @@ public class ChessModel implements IObservable, IChessModel {
 	@Override
 	public void setPromotion(final PieceType type, final BoardPosition from, final BoardPosition to) {
 		PieceColor color = board.getTurn();
-		move(from, to);
+		move(from, to, null);
 		board.setPromotion(new ChessPiece(color, type), to);
         fromPosition = null;
         observers.firePropertyChange(null, false, new RedrawEvent(new BoardPosition[]{from, to}));
