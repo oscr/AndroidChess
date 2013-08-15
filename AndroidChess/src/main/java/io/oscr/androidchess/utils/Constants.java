@@ -1,10 +1,7 @@
 package io.oscr.androidchess.utils;
 
 import io.oscr.androidchess.model.BoardPosition;
-import io.oscr.androidchess.model.pieces.IChessPiece;
 import io.oscr.androidchess.model.pieces.PieceColor;
-
-import java.io.File;
 
 /**
  * Contains all constants used by the application.

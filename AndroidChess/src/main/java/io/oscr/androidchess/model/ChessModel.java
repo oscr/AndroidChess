@@ -18,11 +18,6 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.Set;
 
-/*
-- Detection of castle moves. Better to have some kind of flag?
- */
-
-
 /**
  * Represents the model in the MVC model.
  *
