@@ -280,6 +280,7 @@ public class ChessModel implements IChessModel {
 		return false;
 	}
 
+    // TODO
     private void move(final BoardPosition from, final BoardPosition to, final Move rookMove) {
         if(rookMove != null)
             board.move(rookMove.from, rookMove.to);
@@ -347,13 +348,7 @@ public class ChessModel implements IChessModel {
         return isValid;
     }
 
-    /**
-     *
-     *
-     * @param from
-     * @param to
-     * @return
-     */
+    // TODO
     private Move isLegalCastlingMove(BoardPosition from, BoardPosition to) {
         if (from.equals(Constants.WHITE_KING_START)) {
             if (to.equals(Constants.W_KINGSIDE_KING)
