@@ -282,8 +282,8 @@ public class ChessModel implements IChessModel {
         // Only a moved pawn may allow for en passant.
         IChessPiece fromPiece = board.getChessPiece(fromPosition);
         if(fromPiece.getPieceType() == PieceType.PAWN){
-            final int HOME_ROW = Constants.getHomeRow(fromPiece);
-            final int MOVE_DELTA = Constants.getMoveDelta(fromPiece);
+            final int HOME_ROW = Constants.getHomeRow(fromPiece.getPieceColor());
+            final int MOVE_DELTA = Constants.getMoveDelta(fromPiece.getPieceColor());
 
             /* In order for en passant to be possible there are a number of criterias that need
              * to be met. The moving pawn must be 1) unmoved prior to this moved and 2) make a
