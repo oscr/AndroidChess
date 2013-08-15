@@ -18,6 +18,11 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.Set;
 
+/*
+- Detection of castle moves. Better to have some kind of flag?
+ */
+
+
 /**
  * Represents the model in the MVC model.
  *
@@ -118,7 +123,7 @@ public class ChessModel implements IChessModel {
 		int file = boardPosition.getFile();
 		int rank = boardPosition.getRank();
 
-		if (isSelected(boardPosition)) {
+		if (boardPosition.equals(fromPosition)) {
 			return chessTheme.getSelectedSquare();
 		}
 
@@ -198,6 +203,13 @@ public class ChessModel implements IChessModel {
 		}
 	}
 
+    /*
+     * The following code is not exposed through the interface. It consists of helper methods that
+     * are needed to implement the ChessModel.
+     *
+     */
+
+
 	/**
 	 * Will check if the current player defined by turn is in check.
 	 *
@@ -241,6 +253,13 @@ public class ChessModel implements IChessModel {
 		return false;
 	}
 
+    /**
+     * Will analyze the current game board and determine if there is a move that removes the current
+     * player from check. If no such move the player is checkmate. If such a move exists the player
+     * is just in check.
+     *
+     * @return true if current player is checkmate, otherwise false.
+     */
 	private boolean isCheckmate() {
 		if (isCheck()) {
 			for (int file = 0; file < 8; file++) {
@@ -259,10 +278,6 @@ public class ChessModel implements IChessModel {
 			return true;
 		}
 		return false;
-	}
-
-	private boolean isSelected(BoardPosition boardPosition) {
-		return boardPosition.equals(fromPosition);
 	}
 
     private void move(final BoardPosition from, final BoardPosition to, final Move rookMove) {
@@ -356,10 +371,15 @@ public class ChessModel implements IChessModel {
         return null;
     }
 
-    /*
-     * Ensure that no square between the King and Rook can be reached by opposing side.
+    /**
+     * Ensures that no square between the King and Rook can be reached by opposing side.
      * If an opposing piece can reach an square between it's not a legal castle.
      * Also the King may not castle out of check.
+     *
+     * @param from BoardPosition piece moving from.
+     * @param to BoardPosition piece moving to,
+     * @param delta What side to check for intercepting pieces.
+     * @return true if legal castle move, otherwise false.
      */
     private boolean isLegalCastle(BoardPosition from, BoardPosition to, int delta) {
         int start = Math.min(from.getFile(), to.getFile());
@@ -386,6 +406,13 @@ public class ChessModel implements IChessModel {
         return true;
     }
 
+    /**
+     * Will check if a castle move is being performed.
+     *
+     * @param from BoardPosition piece moving from.
+     * @param to BoardPosition piece moving to,
+     * @return true if castle move, otherwise false.
+     */
     private boolean isCastlingMove(BoardPosition from, BoardPosition to) {
         if (from.equals(Constants.WHITE_KING_START)) {
             if (to.equals(Constants.W_KINGSIDE_KING)) {
@@ -401,16 +428,18 @@ public class ChessModel implements IChessModel {
             } else if (to.equals(Constants.B_QUEENSIDE_KING)) {
                 return true;
             }
-
         }
         return false;
-
     }
 
+    /**
+     * Checks if a pawn has reached the last row. Will return true if it has, otherwise false.
+     *
+     * @param from BoardPosition piece moving from.
+     * @param to BoardPosition piece moving to,
+     * @return true if pawn is on the last row, otherwise false
+     */
     private boolean isPawnPromotion(BoardPosition from, BoardPosition to) {
-        if(board == null)
-            throw new IllegalStateException("BOARD IS NULL!!");
-
         IChessPiece piece = board.getChessPiece(from);
         if (piece.getPieceType() == PieceType.PAWN) {
             if (to.getRank() == Constants.WHITE_PAWN_LAST_RANK || to.getRank() == Constants.BLACK_PAWN_LAST_RANK) {
