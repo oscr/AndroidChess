@@ -347,24 +347,31 @@ public class ChessModel implements IChessModel {
         return isValid;
     }
 
+    /**
+     *
+     *
+     * @param from
+     * @param to
+     * @return
+     */
     private Move isLegalCastlingMove(BoardPosition from, BoardPosition to) {
         if (from.equals(Constants.WHITE_KING_START)) {
             if (to.equals(Constants.W_KINGSIDE_KING)
-                    && isLegalCastle(Constants.WHITE_KING_START, Constants.W_KINGSIDE_ROOK_START, 0)) {
+                    && isLegalCastle(Constants.WHITE_KING_START, Constants.W_KINGSIDE_ROOK_START, false)) {
                 return new Move(Constants.W_KINGSIDE_ROOK_START, Constants.W_KINGSIDE_ROOK_END);
 
             } else if (to.equals(Constants.W_QUEENSIDE_KING)
-                    && isLegalCastle(Constants.WHITE_KING_START, Constants.W_QUEENSIDE_ROOK_START, 1)) {
+                    && isLegalCastle(Constants.WHITE_KING_START, Constants.W_QUEENSIDE_ROOK_START, true)) {
                 return new Move(Constants.W_QUEENSIDE_ROOK_START, Constants.W_QUEENSIDE_ROOK_END);
             }
 
         } else if (from.equals(Constants.BLACK_KING_START)) {
             if (to.equals(Constants.B_KINGSIDE_KING)
-                    && isLegalCastle(Constants.BLACK_KING_START, Constants.B_KINGSIDE_ROOK_START, 0)) {
+                    && isLegalCastle(Constants.BLACK_KING_START, Constants.B_KINGSIDE_ROOK_START, false)) {
                 return new Move(Constants.B_KINGSIDE_ROOK_START, Constants.B_KINGSIDE_ROOK_END);
 
             } else if (to.equals(Constants.B_QUEENSIDE_KING)
-                    && isLegalCastle(Constants.BLACK_KING_START, Constants.B_QUEENSIDE_ROOK_START, 1)) {
+                    && isLegalCastle(Constants.BLACK_KING_START, Constants.B_QUEENSIDE_ROOK_START, true)) {
                 return new Move(Constants.B_QUEENSIDE_ROOK_START, Constants.B_QUEENSIDE_ROOK_END);
             }
         }
@@ -378,14 +385,15 @@ public class ChessModel implements IChessModel {
      *
      * @param from BoardPosition piece moving from.
      * @param to BoardPosition piece moving to,
-     * @param delta What side to check for intercepting pieces.
+     * @param queenSide If it's Queenside castle
      * @return true if legal castle move, otherwise false.
      */
-    private boolean isLegalCastle(BoardPosition from, BoardPosition to, int delta) {
+    private boolean isLegalCastle(BoardPosition from, BoardPosition to, boolean queenSide) {
         int start = Math.min(from.getFile(), to.getFile());
         int end = Math.max(from.getFile(), to.getFile());
 
-        if (delta != 0) {
+        // It doesn't matter if the Rook can be captured. We can step forward.
+        if (queenSide) {
             start++;
             end++;
         }
