@@ -5,8 +5,6 @@ import android.graphics.drawable.ColorDrawable;
 import io.oscr.androidchess.model.pieces.PieceColor;
 import io.oscr.androidchess.model.pieces.PieceType;
 
-import java.beans.PropertyChangeListener;
-
 /**
  * Specifies the behavior that the model in the MVC pattern will expose to the controller.
  */
@@ -38,7 +36,7 @@ public interface IChessModel extends IObservable {
      * piece is placed on that position it will return null.
      *
      * @see io.oscr.androidchess.model.theme.IChessTheme#getPieceString(io.oscr.androidchess.model.pieces.IChessPiece)
-     * @param boardPosition
+     * @param boardPosition the position to check for image resource.
      * @return string representing the image resource name if non empty BoardPosition, otherwise null.
      */
 	public abstract String getPieceString(BoardPosition boardPosition);
